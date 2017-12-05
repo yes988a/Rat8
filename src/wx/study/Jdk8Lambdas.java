@@ -31,12 +31,9 @@ public class Jdk8Lambdas {
             }} ).start();
 
 
-
-
         String separator = ","; //Lambdas会将这些变量隐式得转换成final的
         Arrays.asList( "a", "b", "d" ).forEach(
                 ( String e ) -> System.out.print( e + separator ) );
-
 
 
         Arrays.asList( "a", "b", "d" ).sort( ( e1, e2 ) -> {
