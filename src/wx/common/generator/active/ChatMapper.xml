@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="wx.common.generator.active.ChatMapper">
+  <resultMap id="BaseResultMap" type="wx.common.generator.active.Chat">
+    <id column="uid" jdbcType="VARCHAR" property="uid" />
+    <id column="tim" jdbcType="BIGINT" property="tim" />
+    <result column="reqid" jdbcType="VARCHAR" property="reqid" />
+    <result column="typ" jdbcType="INTEGER" property="typ" />
+    <result column="stat" jdbcType="INTEGER" property="stat" />
+    <result column="des" jdbcType="VARCHAR" property="des" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    uid, tim, reqid, typ, stat, des
+  </sql>
+  <select id="selectByExample" parameterType="wx.common.generator.active.ChatExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from chat
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+    <if test="limit != null">
+      <if test="offset != null">
+        limit ${offset}, ${limit}
+      </if>
+      <if test="offset == null">
+        limit ${limit}
+      </if>
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="wx.common.generator.active.ChatKey" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from chat
+    where uid = #{uid,jdbcType=VARCHAR}
+      and tim = #{tim,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="wx.common.generator.active.ChatKey">
+    delete from chat
+    where uid = #{uid,jdbcType=VARCHAR}
+      and tim = #{tim,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="wx.common.generator.active.ChatExample">
+    delete from chat
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="wx.common.generator.active.Chat">
+    insert into chat (uid, tim, reqid, 
+      typ, stat, des)
+    values (#{uid,jdbcType=VARCHAR}, #{tim,jdbcType=BIGINT}, #{reqid,jdbcType=VARCHAR}, 
+      #{typ,jdbcType=INTEGER}, #{stat,jdbcType=INTEGER}, #{des,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="wx.common.generator.active.Chat">
+    insert into chat
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="uid != null">
+        uid,
+      </if>
+      <if test="tim != null">
+        tim,
+      </if>
+      <if test="reqid != null">
+        reqid,
+      </if>
+      <if test="typ != null">
+        typ,
+      </if>
+      <if test="stat != null">
+        stat,
+      </if>
+      <if test="des != null">
+        des,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="uid != null">
+        #{uid,jdbcType=VARCHAR},
+      </if>
+      <if test="tim != null">
+        #{tim,jdbcType=BIGINT},
+      </if>
+      <if test="reqid != null">
+        #{reqid,jdbcType=VARCHAR},
+      </if>
+      <if test="typ != null">
+        #{typ,jdbcType=INTEGER},
+      </if>
+      <if test="stat != null">
+        #{stat,jdbcType=INTEGER},
+      </if>
+      <if test="des != null">
+        #{des,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="wx.common.generator.active.ChatExample" resultType="java.lang.Long">
+    select count(*) from chat
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update chat
+    <set>
+      <if test="record.uid != null">
+        uid = #{record.uid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.tim != null">
+        tim = #{record.tim,jdbcType=BIGINT},
+      </if>
+      <if test="record.reqid != null">
+        reqid = #{record.reqid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.typ != null">
+        typ = #{record.typ,jdbcType=INTEGER},
+      </if>
+      <if test="record.stat != null">
+        stat = #{record.stat,jdbcType=INTEGER},
+      </if>
+      <if test="record.des != null">
+        des = #{record.des,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update chat
+    set uid = #{record.uid,jdbcType=VARCHAR},
+      tim = #{record.tim,jdbcType=BIGINT},
+      reqid = #{record.reqid,jdbcType=VARCHAR},
+      typ = #{record.typ,jdbcType=INTEGER},
+      stat = #{record.stat,jdbcType=INTEGER},
+      des = #{record.des,jdbcType=VARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="wx.common.generator.active.Chat">
+    update chat
+    <set>
+      <if test="reqid != null">
+        reqid = #{reqid,jdbcType=VARCHAR},
+      </if>
+      <if test="typ != null">
+        typ = #{typ,jdbcType=INTEGER},
+      </if>
+      <if test="stat != null">
+        stat = #{stat,jdbcType=INTEGER},
+      </if>
+      <if test="des != null">
+        des = #{des,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where uid = #{uid,jdbcType=VARCHAR}
+      and tim = #{tim,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="wx.common.generator.active.Chat">
+    update chat
+    set reqid = #{reqid,jdbcType=VARCHAR},
+      typ = #{typ,jdbcType=INTEGER},
+      stat = #{stat,jdbcType=INTEGER},
+      des = #{des,jdbcType=VARCHAR}
+    where uid = #{uid,jdbcType=VARCHAR}
+      and tim = #{tim,jdbcType=BIGINT}
+  </update>
+</mapper>

@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="wx.common.generator.base.ComputerMapper">
+  <resultMap id="BaseResultMap" type="wx.common.generator.base.Computer">
+    <id column="cid" jdbcType="VARCHAR" property="cid" />
+    <result column="pri" jdbcType="VARCHAR" property="pri" />
+    <result column="ip" jdbcType="VARCHAR" property="ip" />
+    <result column="por" jdbcType="INTEGER" property="por" />
+    <result column="unum" jdbcType="INTEGER" property="unum" />
+    <result column="stim" jdbcType="BIGINT" property="stim" />
+    <result column="etim" jdbcType="BIGINT" property="etim" />
+    <result column="stop" jdbcType="INTEGER" property="stop" />
+    <result column="bid" jdbcType="VARCHAR" property="bid" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    cid, pri, ip, por, unum, stim, etim, stop, bid
+  </sql>
+  <select id="selectByExample" parameterType="wx.common.generator.base.ComputerExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from computer
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+    <if test="limit != null">
+      <if test="offset != null">
+        limit ${offset}, ${limit}
+      </if>
+      <if test="offset == null">
+        limit ${limit}
+      </if>
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from computer
+    where cid = #{cid,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from computer
+    where cid = #{cid,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="wx.common.generator.base.ComputerExample">
+    delete from computer
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="wx.common.generator.base.Computer">
+    insert into computer (cid, pri, ip, 
+      por, unum, stim, etim, 
+      stop, bid)
+    values (#{cid,jdbcType=VARCHAR}, #{pri,jdbcType=VARCHAR}, #{ip,jdbcType=VARCHAR}, 
+      #{por,jdbcType=INTEGER}, #{unum,jdbcType=INTEGER}, #{stim,jdbcType=BIGINT}, #{etim,jdbcType=BIGINT}, 
+      #{stop,jdbcType=INTEGER}, #{bid,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="wx.common.generator.base.Computer">
+    insert into computer
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="cid != null">
+        cid,
+      </if>
+      <if test="pri != null">
+        pri,
+      </if>
+      <if test="ip != null">
+        ip,
+      </if>
+      <if test="por != null">
+        por,
+      </if>
+      <if test="unum != null">
+        unum,
+      </if>
+      <if test="stim != null">
+        stim,
+      </if>
+      <if test="etim != null">
+        etim,
+      </if>
+      <if test="stop != null">
+        stop,
+      </if>
+      <if test="bid != null">
+        bid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="cid != null">
+        #{cid,jdbcType=VARCHAR},
+      </if>
+      <if test="pri != null">
+        #{pri,jdbcType=VARCHAR},
+      </if>
+      <if test="ip != null">
+        #{ip,jdbcType=VARCHAR},
+      </if>
+      <if test="por != null">
+        #{por,jdbcType=INTEGER},
+      </if>
+      <if test="unum != null">
+        #{unum,jdbcType=INTEGER},
+      </if>
+      <if test="stim != null">
+        #{stim,jdbcType=BIGINT},
+      </if>
+      <if test="etim != null">
+        #{etim,jdbcType=BIGINT},
+      </if>
+      <if test="stop != null">
+        #{stop,jdbcType=INTEGER},
+      </if>
+      <if test="bid != null">
+        #{bid,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="wx.common.generator.base.ComputerExample" resultType="java.lang.Long">
+    select count(*) from computer
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update computer
+    <set>
+      <if test="record.cid != null">
+        cid = #{record.cid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.pri != null">
+        pri = #{record.pri,jdbcType=VARCHAR},
+      </if>
+      <if test="record.ip != null">
+        ip = #{record.ip,jdbcType=VARCHAR},
+      </if>
+      <if test="record.por != null">
+        por = #{record.por,jdbcType=INTEGER},
+      </if>
+      <if test="record.unum != null">
+        unum = #{record.unum,jdbcType=INTEGER},
+      </if>
+      <if test="record.stim != null">
+        stim = #{record.stim,jdbcType=BIGINT},
+      </if>
+      <if test="record.etim != null">
+        etim = #{record.etim,jdbcType=BIGINT},
+      </if>
+      <if test="record.stop != null">
+        stop = #{record.stop,jdbcType=INTEGER},
+      </if>
+      <if test="record.bid != null">
+        bid = #{record.bid,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update computer
+    set cid = #{record.cid,jdbcType=VARCHAR},
+      pri = #{record.pri,jdbcType=VARCHAR},
+      ip = #{record.ip,jdbcType=VARCHAR},
+      por = #{record.por,jdbcType=INTEGER},
+      unum = #{record.unum,jdbcType=INTEGER},
+      stim = #{record.stim,jdbcType=BIGINT},
+      etim = #{record.etim,jdbcType=BIGINT},
+      stop = #{record.stop,jdbcType=INTEGER},
+      bid = #{record.bid,jdbcType=VARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="wx.common.generator.base.Computer">
+    update computer
+    <set>
+      <if test="pri != null">
+        pri = #{pri,jdbcType=VARCHAR},
+      </if>
+      <if test="ip != null">
+        ip = #{ip,jdbcType=VARCHAR},
+      </if>
+      <if test="por != null">
+        por = #{por,jdbcType=INTEGER},
+      </if>
+      <if test="unum != null">
+        unum = #{unum,jdbcType=INTEGER},
+      </if>
+      <if test="stim != null">
+        stim = #{stim,jdbcType=BIGINT},
+      </if>
+      <if test="etim != null">
+        etim = #{etim,jdbcType=BIGINT},
+      </if>
+      <if test="stop != null">
+        stop = #{stop,jdbcType=INTEGER},
+      </if>
+      <if test="bid != null">
+        bid = #{bid,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where cid = #{cid,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="wx.common.generator.base.Computer">
+    update computer
+    set pri = #{pri,jdbcType=VARCHAR},
+      ip = #{ip,jdbcType=VARCHAR},
+      por = #{por,jdbcType=INTEGER},
+      unum = #{unum,jdbcType=INTEGER},
+      stim = #{stim,jdbcType=BIGINT},
+      etim = #{etim,jdbcType=BIGINT},
+      stop = #{stop,jdbcType=INTEGER},
+      bid = #{bid,jdbcType=VARCHAR}
+    where cid = #{cid,jdbcType=VARCHAR}
+  </update>
+</mapper>

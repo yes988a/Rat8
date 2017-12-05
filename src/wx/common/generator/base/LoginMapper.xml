@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="wx.common.generator.base.LoginMapper">
+  <resultMap id="BaseResultMap" type="wx.common.generator.base.Login">
+    <id column="uid" jdbcType="VARCHAR" property="uid" />
+    <result column="ranid" jdbcType="VARCHAR" property="ranid" />
+    <result column="tid" jdbcType="VARCHAR" property="tid" />
+    <result column="aes" jdbcType="VARCHAR" property="aes" />
+    <result column="tim" jdbcType="BIGINT" property="tim" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    uid, ranid, tid, aes, tim
+  </sql>
+  <select id="selectByExample" parameterType="wx.common.generator.base.LoginExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from login
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+    <if test="limit != null">
+      <if test="offset != null">
+        limit ${offset}, ${limit}
+      </if>
+      <if test="offset == null">
+        limit ${limit}
+      </if>
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from login
+    where uid = #{uid,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from login
+    where uid = #{uid,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="wx.common.generator.base.LoginExample">
+    delete from login
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="wx.common.generator.base.Login">
+    insert into login (uid, ranid, tid, 
+      aes, tim)
+    values (#{uid,jdbcType=VARCHAR}, #{ranid,jdbcType=VARCHAR}, #{tid,jdbcType=VARCHAR}, 
+      #{aes,jdbcType=VARCHAR}, #{tim,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="wx.common.generator.base.Login">
+    insert into login
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="uid != null">
+        uid,
+      </if>
+      <if test="ranid != null">
+        ranid,
+      </if>
+      <if test="tid != null">
+        tid,
+      </if>
+      <if test="aes != null">
+        aes,
+      </if>
+      <if test="tim != null">
+        tim,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="uid != null">
+        #{uid,jdbcType=VARCHAR},
+      </if>
+      <if test="ranid != null">
+        #{ranid,jdbcType=VARCHAR},
+      </if>
+      <if test="tid != null">
+        #{tid,jdbcType=VARCHAR},
+      </if>
+      <if test="aes != null">
+        #{aes,jdbcType=VARCHAR},
+      </if>
+      <if test="tim != null">
+        #{tim,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="wx.common.generator.base.LoginExample" resultType="java.lang.Long">
+    select count(*) from login
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update login
+    <set>
+      <if test="record.uid != null">
+        uid = #{record.uid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.ranid != null">
+        ranid = #{record.ranid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.tid != null">
+        tid = #{record.tid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.aes != null">
+        aes = #{record.aes,jdbcType=VARCHAR},
+      </if>
+      <if test="record.tim != null">
+        tim = #{record.tim,jdbcType=BIGINT},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update login
+    set uid = #{record.uid,jdbcType=VARCHAR},
+      ranid = #{record.ranid,jdbcType=VARCHAR},
+      tid = #{record.tid,jdbcType=VARCHAR},
+      aes = #{record.aes,jdbcType=VARCHAR},
+      tim = #{record.tim,jdbcType=BIGINT}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="wx.common.generator.base.Login">
+    update login
+    <set>
+      <if test="ranid != null">
+        ranid = #{ranid,jdbcType=VARCHAR},
+      </if>
+      <if test="tid != null">
+        tid = #{tid,jdbcType=VARCHAR},
+      </if>
+      <if test="aes != null">
+        aes = #{aes,jdbcType=VARCHAR},
+      </if>
+      <if test="tim != null">
+        tim = #{tim,jdbcType=BIGINT},
+      </if>
+    </set>
+    where uid = #{uid,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="wx.common.generator.base.Login">
+    update login
+    set ranid = #{ranid,jdbcType=VARCHAR},
+      tid = #{tid,jdbcType=VARCHAR},
+      aes = #{aes,jdbcType=VARCHAR},
+      tim = #{tim,jdbcType=BIGINT}
+    where uid = #{uid,jdbcType=VARCHAR}
+  </update>
+</mapper>

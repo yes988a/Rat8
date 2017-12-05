@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="wx.service.dao.ExtUrelationMapper">
+
+    <select id="findUserrelationByfid" parameterType="java.lang.String"
+            resultType="wx.common.entity.UserrelationSimple">
+		   select fid,remark,shie,del from urelation
+		    where uid=#{uid} and fid=#{fid}
+    </select>
+
+    <select id="findUserCidByfid" parameterType="java.lang.String"
+            resultType="java.lang.String">
+		   select cid from urelation  where uid=#{uid} and fid=#{fid} limit 0,1
+    </select>
+
+    <select id="findUserrelations" parameterType="java.lang.String"
+            resultType="wx.common.entity.UserrelationSimple">
+		 select fid,remark,shie,del from urelation
+		    where uid=#{uid}
+    </select>
+
+    <select id="findUserrelationByfids" parameterType="java.lang.String"
+            resultType="wx.common.entity.UserrelationSimple">
+        select fid,remark,shie,del from urelation
+        where uid=#{uid} and fid
+        in
+        <foreach item="item" index="index" collection="fids" open="("
+                 separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+</mapper>

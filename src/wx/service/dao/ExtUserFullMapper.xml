@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="wx.service.dao.ExtUserFullMapper">
+
+    <select id="loginCompelete" parameterType="java.lang.String"
+            resultType="wx.common.entity.LoginCompeletePojo">
+        select uid,nickname,sound,create_time from user_full
+        where acc=#{acc} and pas=#{pas}
+    </select>
+
+    <select id="findSimpleByQrcode" parameterType="java.lang.String"
+            resultType="wx.common.entity.UsimpleTostrange">
+        select uid,acc,nickname,autograph from user_full
+        where qrcode=#{qrcode}
+    </select>
+
+    <select id="findSimpleByacc" parameterType="java.lang.String"
+            resultType="wx.common.entity.UsimpleTostrange">
+        select uid,acc,nickname,autograph from user_full
+        where acc=#{acc}
+    </select>
+
+    <select id="findSimpleByphone" parameterType="java.lang.String"
+            resultType="wx.common.entity.UsimpleTostrange">
+        select uid,acc,nickname,autograph from user_full
+        where phone=#{phone}
+    </select>
+
+    <select id="findSimpleByUid" parameterType="java.lang.String"
+            resultType="wx.common.entity.UsimpleTostrange">
+        select uid,acc,nickname,autograph from user_full
+        where uid=#{uid}
+    </select>
+
+    <select id="findMySimple" parameterType="java.lang.String"
+            resultType="wx.common.entity.MySimple">
+        select nickname,phone,sound,autograph from user_full
+        where uid=#{uid}
+    </select>
+
+</mapper>

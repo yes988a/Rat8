@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+      http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+      http://www.springframework.org/schema/task
+        http://www.springframework.org/schema/task/spring-task-4.1.xsd
+      http://www.springframework.org/schema/context
+      http://www.springframework.org/schema/context/spring-context-4.3.xsd
+      ">
+
+    <!-- 引入项目配置文件 -->
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <list>
+                <value>jdbc.properties</value><!-- 引入redis配置文件 -->
+                <value>redis.properties</value><!-- 定义spring-jdbc配置信息路径 -->
+            </list>
+        </property>
+    </bean>
+    <context:component-scan base-package="wx"/>
+    <bean id="stringSerializer"
+          class="org.springframework.data.redis.serializer.StringRedisSerializer"/>
+
+    <!-- base========start==================== -->
+
+    <!--====================== mysql 数据源 ========start================ -->
+    <bean id="data_active" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <property name="driverClass" value="com.mysql.jdbc.Driver"></property>
+        <property name="jdbcUrl" value="${active.mysql.jdbcUrl}"></property>
+        <property name="user" value="${active.mysql.user}"></property>
+        <property name="password" value="${active.mysql.password}"></property>
+        <property name="acquireIncrement" value="${acquireIncrement}"/><!--当连接池中的连接耗尽的时候c3p0一次同时获取的连接数。Default: 3 -->
+        <property name="initialPoolSize"
+                  value="${initialPoolSize}"/> <!--初始化时获取的连接数，取值应在minPoolSize与maxPoolSize之间。Default: 3 -->
+        <property name="minPoolSize" value="${minPoolSize}"/><!--连接池中保留的最小连接数。 -->
+        <property name="maxPoolSize" value="${maxPoolSize}"/> <!--连接池中保留的最大连接数。Default: 15 -->
+
+        <!--JDBC的标准参数，用以控制数据源内加载的PreparedStatements数量。但由于预缓存的statements 属于单个connection而不是整个连接池。所以设置这个参数需要考虑到多方面的因素。
+            如果maxStatements与maxStatementsPerConnection均为0，则缓存被关闭。Default: 0 -->
+        <!--连接池中保留的最小连接数。 -->
+        <property name="maxStatements" value="${maxStatements}"/>
+
+        <!--最大空闲时间,60秒内未使用则连接被丢弃。若为0则永不丢弃。Default: 0 -->
+        <property name="maxIdleTime">
+            <value>60</value>
+        </property>
+
+        <!--每60秒检查所有连接池中的空闲连接。Default: 0 -->
+        <property name="idleConnectionTestPeriod">
+            <value>60</value>
+        </property>
+        <!--定义在从数据库获取新连接失败后重复尝试的次数。Default: 30 -->
+        <property name="acquireRetryAttempts">
+            <value>30</value>
+        </property>
+        <!--获取连接失败将会引起所有等待连接池来获取连接的线程抛出异常。但是数据源仍有效 保留，并在下次调用getConnection()的时候继续尝试获取连接。如果设为true，那么在尝试
+            获取连接失败后该数据源将申明已断开并永久关闭。Default: false -->
+        <property name="breakAfterAcquireFailure">
+            <value>true</value>
+        </property>
+    </bean>
+
+    <bean id="data_base" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <property name="driverClass" value="com.mysql.jdbc.Driver"></property>
+        <property name="jdbcUrl" value="${base.mysql.jdbcUrl}"></property>
+        <property name="user" value="${base.mysql.user}"></property>
+        <property name="password" value="${base.mysql.password}"></property>
+        <property name="acquireIncrement" value="${acquireIncrement}"/><!--当连接池中的连接耗尽的时候c3p0一次同时获取的连接数。Default: 3 -->
+        <property name="initialPoolSize"
+                  value="${initialPoolSize}"/> <!--初始化时获取的连接数，取值应在minPoolSize与maxPoolSize之间。Default: 3 -->
+        <property name="minPoolSize" value="${minPoolSize}"/><!--连接池中保留的最小连接数。 -->
+        <property name="maxPoolSize" value="${maxPoolSize}"/> <!--连接池中保留的最大连接数。Default: 15 -->
+
+        <!--JDBC的标准参数，用以控制数据源内加载的PreparedStatements数量。但由于预缓存的statements 属于单个connection而不是整个连接池。所以设置这个参数需要考虑到多方面的因素。
+            如果maxStatements与maxStatementsPerConnection均为0，则缓存被关闭。Default: 0 -->
+        <!--连接池中保留的最小连接数。 -->
+        <property name="maxStatements" value="${maxStatements}"/>
+
+        <!--最大空闲时间,60秒内未使用则连接被丢弃。若为0则永不丢弃。Default: 0 -->
+        <property name="maxIdleTime">
+            <value>60</value>
+        </property>
+
+        <!--每60秒检查所有连接池中的空闲连接。Default: 0 -->
+        <property name="idleConnectionTestPeriod">
+            <value>60</value>
+        </property>
+        <!--定义在从数据库获取新连接失败后重复尝试的次数。Default: 30 -->
+        <property name="acquireRetryAttempts">
+            <value>30</value>
+        </property>
+        <!--获取连接失败将会引起所有等待连接池来获取连接的线程抛出异常。但是数据源仍有效 保留，并在下次调用getConnection()的时候继续尝试获取连接。如果设为true，那么在尝试
+            获取连接失败后该数据源将申明已断开并永久关闭。Default: false -->
+        <property name="breakAfterAcquireFailure">
+            <value>true</value>
+        </property>
+    </bean>
+
+    <bean id="sql_active" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="data_active"/>
+        <property name="mapperLocations" value="classpath*:wx/common/generator/active/*Mapper.xml"/>
+    </bean>
+
+    <bean id="sql_base" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="data_base"/>
+        <property name="mapperLocations" value="classpath*:wx/common/generator/base/*Mapper.xml"/>
+    </bean>
+
+    <!--====================== mysql 数据源 ========end================ -->
+
+    <bean id="chatManager" class="wx.service.manager.ChatManager"/>
+    <bean id="friendManager" class="wx.service.manager.FriendManager"/>
+    <bean id="groupManager" class="wx.service.manager.GroupManager"/>
+    <bean id="loginManager" class="wx.service.manager.LoginManager"/>
+    <bean id="phoneManager" class="wx.service.manager.PhoneManager"/>
+    <bean id="registerManager" class="wx.service.manager.RegisterManager"/>
+    <bean id="searchManager" class="wx.service.manager.SearchManager"/>
+    <bean id="mineManager" class="wx.service.manager.MineManager"/>
+    <bean id="serManager" class="wx.service.manager.SerManager"/>
+    <bean id="testnumManager" class="wx.service.manager.TestnumManager"/>
+
+    <!--dao声明声明声明，dao上面的注解不能用，只能声明啦 ==================================================-->
+
+    <bean id="extComputerMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+        <property name="mapperInterface" value="wx.service.dao.ExtComputerMapper"/>
+        <property name="sqlSessionFactory" ref="sql_base"/>
+    </bean>
+    <bean id="extGroupsMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+        <property name="mapperInterface" value="wx.service.dao.ExtGroupsMapper"/>
+        <property name="sqlSessionFactory" ref="sql_base"/>
+    </bean>
+    <bean id="extGuserMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+        <property name="mapperInterface" value="wx.service.dao.ExtGuserMapper"/>
+        <property name="sqlSessionFactory" ref="sql_base"/>
+    </bean>
+    <bean id="extUrelationMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+        <property name="mapperInterface" value="wx.service.dao.ExtUrelationMapper"/>
+        <property name="sqlSessionFactory" ref="sql_base"/>
+    </bean>
+    <bean id="extUserFullMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+        <property name="mapperInterface" value="wx.service.dao.ExtUserFullMapper"/>
+        <property name="sqlSessionFactory" ref="sql_base"/>
+    </bean>
+
+
+    <!-- ——generator——generator========start===========generator======generator=== -->
+
+    <bean id="chatMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+        <property name="mapperInterface" value="wx.common.generator.active.ChatMapper"/>
+        <property name="sqlSessionFactory" ref="sql_active"/>
+    </bean>
+
+    <bean id="storageTaskMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+        <property name="mapperInterface" value="wx.common.generator.active.StorageTaskMapper"/>
+        <property name="sqlSessionFactory" ref="sql_active"/>
+    </bean>
+
+    <bean id="voteTaskMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+        <property name="mapperInterface" value="wx.common.generator.active.VoteTaskMapper"/>
+        <property name="sqlSessionFactory" ref="sql_active"/>
+    </bean>
+
+    <bean id="errNumMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+        <property name="mapperInterface" value="wx.common.generator.active.ErrNumMapper"/>
+        <property name="sqlSessionFactory" ref="sql_active"/>
+    </bean>
+
+    <bean id="computerMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+        <property name="mapperInterface" value="wx.common.generator.base.ComputerMapper"/>
+        <property name="sqlSessionFactory" ref="sql_base"/>
+    </bean>
+
+    <bean id="groupsMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+        <property name="mapperInterface" value="wx.common.generator.base.GroupsMapper"/>
+        <property name="sqlSessionFactory" ref="sql_base"/>
+    </bean>
+
+    <bean id="guserMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+        <property name="mapperInterface" value="wx.common.generator.base.GuserMapper"/>
+        <property name="sqlSessionFactory" ref="sql_base"/>
+    </bean>
+
+    <bean id="loginMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+        <property name="mapperInterface" value="wx.common.generator.base.LoginMapper"/>
+        <property name="sqlSessionFactory" ref="sql_base"/>
+    </bean>
+
+    <bean id="urelationMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+        <property name="mapperInterface" value="wx.common.generator.base.UrelationMapper"/>
+        <property name="sqlSessionFactory" ref="sql_base"/>
+    </bean>
+
+    <bean id="userFullMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+        <property name="mapperInterface" value="wx.common.generator.base.UserFullMapper"/>
+        <property name="sqlSessionFactory" ref="sql_base"/>
+    </bean>
+
+    <bean id="userUniqueMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+        <property name="mapperInterface" value="wx.common.generator.base.UserUniqueMapper"/>
+        <property name="sqlSessionFactory" ref="sql_base"/>
+    </bean>
+
+    <!-- ——slave——redis========start==================== -->
+    <bean id="poolConfigRedisCluster" class="redis.clients.jedis.JedisPoolConfig">
+        <property name="maxIdle" value="${redis.pool.minIdle}"/>
+        <property name="maxTotal" value="${redis.pool.maxActive}"/>
+        <property name="maxWaitMillis" value="${redis.pool.maxWait}"/>
+        <property name="testOnBorrow" value="${redis.pool.testOnBorrow}"/>
+    </bean>
+
+    <bean id="redis" class="redis.clients.jedis.JedisPool">
+        <constructor-arg index="0" ref="poolConfigRedisCluster"/>
+        <constructor-arg index="1" value="${redis.hostOne}" type="java.lang.String"/>
+        <constructor-arg index="2" value="${redis.portOne}" type="int"/>
+    </bean>
+
+    <!--
+        <bean id="jedis" class="redis.clients.jedis.JedisCluster">
+            <constructor-arg index="0">
+                <set>
+                    <bean class="redis.clients.jedis.HostAndPort">
+                        <constructor-arg type="java.lang.String" value="${redis.host}"/>
+                        <constructor-arg type="int" value="${redis.port1}"/>
+                    </bean>
+                    <bean class="redis.clients.jedis.HostAndPort">
+                        <constructor-arg type="java.lang.String" value="${redis.host}"/>
+                        <constructor-arg type="int" value="${redis.port2}"/>
+                    </bean>
+                    <bean class="redis.clients.jedis.HostAndPort">
+                        <constructor-arg type="java.lang.String" value="${redis.host}"/>
+                        <constructor-arg type="int" value="${redis.port3}"/>
+                    </bean>
+                    <bean class="redis.clients.jedis.HostAndPort">
+                        <constructor-arg type="java.lang.String" value="${redis.host}"/>
+                        <constructor-arg type="int" value="${redis.port4}"/>
+                    </bean>
+                    <bean class="redis.clients.jedis.HostAndPort">
+                        <constructor-arg type="java.lang.String" value="${redis.host}"/>
+                        <constructor-arg type="int" value="${redis.port5}"/>
+                    </bean>
+                    <bean class="redis.clients.jedis.HostAndPort">
+                        <constructor-arg type="java.lang.String" value="${redis.host}"/>
+                        <constructor-arg type="int" value="${redis.port6}"/>
+                    </bean>
+                </set>
+            </constructor-arg>
+            <constructor-arg index="1" value="18000" type="int"></constructor-arg>
+            <constructor-arg index="2" ref="poolConfigRedisCluster"></constructor-arg>
+        </bean>
+         ——slave——redis========end==================== -->
+
+    <bean id="dayTaskJob" class="wx.common.job.DayTaskJob"/>
+    <bean id="nightTaskJob" class="wx.common.job.NightTaskJob"/>
+
+
+    <task:scheduler id="taskScheduler" pool-size="100"/>
+    <task:scheduled-tasks scheduler="taskScheduler">
+
+        <!-- 43秒一次 -->
+        <task:scheduled ref="dayTaskJob" method="execute1" cron="39 * * * * ?"/>
+
+        <!--  30分钟一次   每小时的31分31秒触发任务-->
+        <task:scheduled ref="dayTaskJob" method="execute2" cron="31 31 * * * ?"/>
+
+        <!--  晚上 三点执行一次 -->
+        <task:scheduled ref="nightTaskJob" method="execute1" cron="30 10 3 * * ?"/>
+
+        <!--  晚上 四点执行一次 -->
+        <task:scheduled ref="nightTaskJob" method="execute2" cron="30 10 4 * * ?"/>
+
+        <!--
+                &lt;!&ndash; 每半分钟触发任务 &ndash;&gt;
+                <task:scheduled ref="dayTaskJob" method="execute1" cron="30 * * * * ?"/>
+                &lt;!&ndash; 每小时的10分30秒触发任务 &ndash;&gt;
+                <task:scheduled ref="testTaskJob" method="execute2" cron="30 10 * * * ?"/>
+                &lt;!&ndash; 每天1点10分30秒触发任务 &ndash;&gt;
+                <task:scheduled ref="testTaskJob" method="execute3" cron="30 10 1 * * ?"/>
+                &lt;!&ndash; 每月20号的1点10分30秒触发任务 &ndash;&gt;
+                <task:scheduled ref="testTaskJob" method="execute4" cron="30 10 1 20 * ?"/>
+                &lt;!&ndash; 每年10月20号的1点10分30秒触发任务 &ndash;&gt;
+                <task:scheduled ref="testTaskJob" method="execute5" cron="30 10 1 20 10 ?"/>
+                &lt;!&ndash; 每15秒、30秒、45秒时触发任务 &ndash;&gt;
+                <task:scheduled ref="testTaskJob" method="execute6" cron="15,30,45 * * * * ?"/>
+                &lt;!&ndash; 15秒到45秒每隔1秒触发任务 &ndash;&gt;
+                <task:scheduled ref="testTaskJob" method="execute7" cron="15-45 * * * * ?"/>
+                &lt;!&ndash; 每分钟的每15秒时任务任务，每隔5秒触发一次 &ndash;&gt;
+                <task:scheduled ref="testTaskJob" method="execute8" cron="15/5 * * * * ?"/>
+                &lt;!&ndash; 每分钟的15到30秒之间开始触发，每隔5秒触发一次 &ndash;&gt;
+                <task:scheduled ref="testTaskJob" method="execute9" cron="15-30/5 * * * * ?"/>
+                &lt;!&ndash; 每小时的0分0秒开始触发，每隔3分钟触发一次 &ndash;&gt;
+                <task:scheduled ref="testTaskJob" method="execute10" cron="0 0/3 * * * ?"/>
+                &lt;!&ndash; 星期一到星期五的10点15分0秒触发任务 &ndash;&gt;
+                <task:scheduled ref="testTaskJob" method="execute11" cron="0 15 10 ? * MON-FRI"/>-->
+    </task:scheduled-tasks>
+</beans>
