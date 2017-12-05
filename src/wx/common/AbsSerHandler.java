@@ -50,7 +50,6 @@ public abstract class AbsSerHandler extends ChannelInboundHandlerAdapter {
     // manager方法：结尾_http，表示仅仅可用于http请求，这样的方法中不需要返回url标识。
     // manager方法：server方法如果不返回，数据，就，不需要传入jout.
 
-
     /*
     是否存储，服务器间的失败重发，根据业务定吧。
 
