@@ -91,7 +91,7 @@ public class ChatManager {
 
         JsonObject jout = new JsonObject();
         //校验数据格式。长度
-        if (uid.length() != 32 || into.get(ChatUtil.para_chat_typ) == null || into.get(ChatUtil.para_chat_txt) == null
+        if (uid.length() != 32 || into.get(ChatUtil.para_chat_des_tif) == null || into.get(ChatUtil.para_chat_txt) == null
                 || into.get(ChatUtil.para_res) == null) {
             jout.addProperty(WxUtil.para_r, RetNumUtil.n_b1);
             return jout;
@@ -150,7 +150,7 @@ public class ChatManager {
         //同一个服务器，直接插入。
         //不同服务器，转发。
 
-        int typ = into.get(ChatUtil.para_chat_typ).getAsInt();
+        int des_typ = into.get(ChatUtil.para_chat_des_tif).getAsInt();
         String txt = into.get(ChatUtil.para_chat_txt).getAsString();
         String req = into.get(ChatUtil.para_req).getAsString();
         String res = into.get(ChatUtil.para_res).getAsString();
@@ -161,12 +161,15 @@ public class ChatManager {
 
         chat.setUid(res);
         chat.setTim(into.get(WxUtil.para_tim).getAsLong());
-        chat.setTyp(typ);
+
+        chat.setTyp(ChatUtil.typ_chat_single);
+
+
         chat.setStat(WxUtil.stat_ab);
         chat.setReqid(req);
         chat.setDes(txt);
 
-        if (ChatUtil.typ_img == typ) {
+        if (ChatUtil.typ_img == des_typ) {
             if (into.get(ChatUtil.para_f_str) == null) {
                 filesucc = false;
             } else {
