@@ -324,123 +324,123 @@ public class ChatExample {
             return (Criteria) this;
         }
 
-        public Criteria andTypIsNull() {
-            addCriterion("typ is null");
+        public Criteria andBtypIsNull() {
+            addCriterion("btyp is null");
             return (Criteria) this;
         }
 
-        public Criteria andTypIsNotNull() {
-            addCriterion("typ is not null");
+        public Criteria andBtypIsNotNull() {
+            addCriterion("btyp is not null");
             return (Criteria) this;
         }
 
-        public Criteria andTypEqualTo(Integer value) {
-            addCriterion("typ =", value, "typ");
+        public Criteria andBtypEqualTo(Integer value) {
+            addCriterion("btyp =", value, "btyp");
             return (Criteria) this;
         }
 
-        public Criteria andTypNotEqualTo(Integer value) {
-            addCriterion("typ <>", value, "typ");
+        public Criteria andBtypNotEqualTo(Integer value) {
+            addCriterion("btyp <>", value, "btyp");
             return (Criteria) this;
         }
 
-        public Criteria andTypGreaterThan(Integer value) {
-            addCriterion("typ >", value, "typ");
+        public Criteria andBtypGreaterThan(Integer value) {
+            addCriterion("btyp >", value, "btyp");
             return (Criteria) this;
         }
 
-        public Criteria andTypGreaterThanOrEqualTo(Integer value) {
-            addCriterion("typ >=", value, "typ");
+        public Criteria andBtypGreaterThanOrEqualTo(Integer value) {
+            addCriterion("btyp >=", value, "btyp");
             return (Criteria) this;
         }
 
-        public Criteria andTypLessThan(Integer value) {
-            addCriterion("typ <", value, "typ");
+        public Criteria andBtypLessThan(Integer value) {
+            addCriterion("btyp <", value, "btyp");
             return (Criteria) this;
         }
 
-        public Criteria andTypLessThanOrEqualTo(Integer value) {
-            addCriterion("typ <=", value, "typ");
+        public Criteria andBtypLessThanOrEqualTo(Integer value) {
+            addCriterion("btyp <=", value, "btyp");
             return (Criteria) this;
         }
 
-        public Criteria andTypIn(List<Integer> values) {
-            addCriterion("typ in", values, "typ");
+        public Criteria andBtypIn(List<Integer> values) {
+            addCriterion("btyp in", values, "btyp");
             return (Criteria) this;
         }
 
-        public Criteria andTypNotIn(List<Integer> values) {
-            addCriterion("typ not in", values, "typ");
+        public Criteria andBtypNotIn(List<Integer> values) {
+            addCriterion("btyp not in", values, "btyp");
             return (Criteria) this;
         }
 
-        public Criteria andTypBetween(Integer value1, Integer value2) {
-            addCriterion("typ between", value1, value2, "typ");
+        public Criteria andBtypBetween(Integer value1, Integer value2) {
+            addCriterion("btyp between", value1, value2, "btyp");
             return (Criteria) this;
         }
 
-        public Criteria andTypNotBetween(Integer value1, Integer value2) {
-            addCriterion("typ not between", value1, value2, "typ");
+        public Criteria andBtypNotBetween(Integer value1, Integer value2) {
+            addCriterion("btyp not between", value1, value2, "btyp");
             return (Criteria) this;
         }
 
-        public Criteria andStatIsNull() {
-            addCriterion("stat is null");
+        public Criteria andDtypIsNull() {
+            addCriterion("dtyp is null");
             return (Criteria) this;
         }
 
-        public Criteria andStatIsNotNull() {
-            addCriterion("stat is not null");
+        public Criteria andDtypIsNotNull() {
+            addCriterion("dtyp is not null");
             return (Criteria) this;
         }
 
-        public Criteria andStatEqualTo(Integer value) {
-            addCriterion("stat =", value, "stat");
+        public Criteria andDtypEqualTo(Integer value) {
+            addCriterion("dtyp =", value, "dtyp");
             return (Criteria) this;
         }
 
-        public Criteria andStatNotEqualTo(Integer value) {
-            addCriterion("stat <>", value, "stat");
+        public Criteria andDtypNotEqualTo(Integer value) {
+            addCriterion("dtyp <>", value, "dtyp");
             return (Criteria) this;
         }
 
-        public Criteria andStatGreaterThan(Integer value) {
-            addCriterion("stat >", value, "stat");
+        public Criteria andDtypGreaterThan(Integer value) {
+            addCriterion("dtyp >", value, "dtyp");
             return (Criteria) this;
         }
 
-        public Criteria andStatGreaterThanOrEqualTo(Integer value) {
-            addCriterion("stat >=", value, "stat");
+        public Criteria andDtypGreaterThanOrEqualTo(Integer value) {
+            addCriterion("dtyp >=", value, "dtyp");
             return (Criteria) this;
         }
 
-        public Criteria andStatLessThan(Integer value) {
-            addCriterion("stat <", value, "stat");
+        public Criteria andDtypLessThan(Integer value) {
+            addCriterion("dtyp <", value, "dtyp");
             return (Criteria) this;
         }
 
-        public Criteria andStatLessThanOrEqualTo(Integer value) {
-            addCriterion("stat <=", value, "stat");
+        public Criteria andDtypLessThanOrEqualTo(Integer value) {
+            addCriterion("dtyp <=", value, "dtyp");
             return (Criteria) this;
         }
 
-        public Criteria andStatIn(List<Integer> values) {
-            addCriterion("stat in", values, "stat");
+        public Criteria andDtypIn(List<Integer> values) {
+            addCriterion("dtyp in", values, "dtyp");
             return (Criteria) this;
         }
 
-        public Criteria andStatNotIn(List<Integer> values) {
-            addCriterion("stat not in", values, "stat");
+        public Criteria andDtypNotIn(List<Integer> values) {
+            addCriterion("dtyp not in", values, "dtyp");
             return (Criteria) this;
         }
 
-        public Criteria andStatBetween(Integer value1, Integer value2) {
-            addCriterion("stat between", value1, value2, "stat");
+        public Criteria andDtypBetween(Integer value1, Integer value2) {
+            addCriterion("dtyp between", value1, value2, "dtyp");
             return (Criteria) this;
         }
 
-        public Criteria andStatNotBetween(Integer value1, Integer value2) {
-            addCriterion("stat not between", value1, value2, "stat");
+        public Criteria andDtypNotBetween(Integer value1, Integer value2) {
+            addCriterion("dtyp not between", value1, value2, "dtyp");
             return (Criteria) this;
         }
 

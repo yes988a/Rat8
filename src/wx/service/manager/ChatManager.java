@@ -162,10 +162,9 @@ public class ChatManager {
         chat.setUid(res);
         chat.setTim(into.get(WxUtil.para_tim).getAsLong());
 
-        chat.setTyp(ChatUtil.typ_chat_single);
+        chat.setBtyp(ChatUtil.typ_chat_single);
 
-
-        chat.setStat(WxUtil.stat_ab);
+        chat.setDtyp(des_typ);
         chat.setReqid(req);
         chat.setDes(txt);
 

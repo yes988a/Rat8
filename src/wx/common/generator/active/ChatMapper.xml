@@ -5,8 +5,8 @@
     <id column="uid" jdbcType="VARCHAR" property="uid" />
     <id column="tim" jdbcType="BIGINT" property="tim" />
     <result column="reqid" jdbcType="VARCHAR" property="reqid" />
-    <result column="typ" jdbcType="INTEGER" property="typ" />
-    <result column="stat" jdbcType="INTEGER" property="stat" />
+    <result column="btyp" jdbcType="INTEGER" property="btyp" />
+    <result column="dtyp" jdbcType="INTEGER" property="dtyp" />
     <result column="des" jdbcType="VARCHAR" property="des" />
   </resultMap>
   <sql id="Example_Where_Clause">
@@ -68,7 +68,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    uid, tim, reqid, typ, stat, des
+    uid, tim, reqid, btyp, dtyp, des
   </sql>
   <select id="selectByExample" parameterType="wx.common.generator.active.ChatExample" resultMap="BaseResultMap">
     select
@@ -112,9 +112,9 @@
   </delete>
   <insert id="insert" parameterType="wx.common.generator.active.Chat">
     insert into chat (uid, tim, reqid, 
-      typ, stat, des)
+      btyp, dtyp, des)
     values (#{uid,jdbcType=VARCHAR}, #{tim,jdbcType=BIGINT}, #{reqid,jdbcType=VARCHAR}, 
-      #{typ,jdbcType=INTEGER}, #{stat,jdbcType=INTEGER}, #{des,jdbcType=VARCHAR})
+      #{btyp,jdbcType=INTEGER}, #{dtyp,jdbcType=INTEGER}, #{des,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="wx.common.generator.active.Chat">
     insert into chat
@@ -128,11 +128,11 @@
       <if test="reqid != null">
         reqid,
       </if>
-      <if test="typ != null">
-        typ,
+      <if test="btyp != null">
+        btyp,
       </if>
-      <if test="stat != null">
-        stat,
+      <if test="dtyp != null">
+        dtyp,
       </if>
       <if test="des != null">
         des,
@@ -148,11 +148,11 @@
       <if test="reqid != null">
         #{reqid,jdbcType=VARCHAR},
       </if>
-      <if test="typ != null">
-        #{typ,jdbcType=INTEGER},
+      <if test="btyp != null">
+        #{btyp,jdbcType=INTEGER},
       </if>
-      <if test="stat != null">
-        #{stat,jdbcType=INTEGER},
+      <if test="dtyp != null">
+        #{dtyp,jdbcType=INTEGER},
       </if>
       <if test="des != null">
         #{des,jdbcType=VARCHAR},
@@ -177,11 +177,11 @@
       <if test="record.reqid != null">
         reqid = #{record.reqid,jdbcType=VARCHAR},
       </if>
-      <if test="record.typ != null">
-        typ = #{record.typ,jdbcType=INTEGER},
+      <if test="record.btyp != null">
+        btyp = #{record.btyp,jdbcType=INTEGER},
       </if>
-      <if test="record.stat != null">
-        stat = #{record.stat,jdbcType=INTEGER},
+      <if test="record.dtyp != null">
+        dtyp = #{record.dtyp,jdbcType=INTEGER},
       </if>
       <if test="record.des != null">
         des = #{record.des,jdbcType=VARCHAR},
@@ -196,8 +196,8 @@
     set uid = #{record.uid,jdbcType=VARCHAR},
       tim = #{record.tim,jdbcType=BIGINT},
       reqid = #{record.reqid,jdbcType=VARCHAR},
-      typ = #{record.typ,jdbcType=INTEGER},
-      stat = #{record.stat,jdbcType=INTEGER},
+      btyp = #{record.btyp,jdbcType=INTEGER},
+      dtyp = #{record.dtyp,jdbcType=INTEGER},
       des = #{record.des,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -209,11 +209,11 @@
       <if test="reqid != null">
         reqid = #{reqid,jdbcType=VARCHAR},
       </if>
-      <if test="typ != null">
-        typ = #{typ,jdbcType=INTEGER},
+      <if test="btyp != null">
+        btyp = #{btyp,jdbcType=INTEGER},
       </if>
-      <if test="stat != null">
-        stat = #{stat,jdbcType=INTEGER},
+      <if test="dtyp != null">
+        dtyp = #{dtyp,jdbcType=INTEGER},
       </if>
       <if test="des != null">
         des = #{des,jdbcType=VARCHAR},
@@ -225,8 +225,8 @@
   <update id="updateByPrimaryKey" parameterType="wx.common.generator.active.Chat">
     update chat
     set reqid = #{reqid,jdbcType=VARCHAR},
-      typ = #{typ,jdbcType=INTEGER},
-      stat = #{stat,jdbcType=INTEGER},
+      btyp = #{btyp,jdbcType=INTEGER},
+      dtyp = #{dtyp,jdbcType=INTEGER},
       des = #{des,jdbcType=VARCHAR}
     where uid = #{uid,jdbcType=VARCHAR}
       and tim = #{tim,jdbcType=BIGINT}

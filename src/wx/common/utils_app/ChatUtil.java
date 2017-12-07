@@ -9,7 +9,7 @@ public class ChatUtil {
     public final static String para_res = "s92m";
 
     // 单聊，数据标示
-    public final static int typ_chat_single = 5278;
+    public final static int typ_chat_single = 278;
 
     // 0 文本 1图片 3附件 4链接
     public final static int typ_txt = 0;

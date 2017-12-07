@@ -207,8 +207,7 @@ public class FriendManager {
                         Chat chat = new Chat();
                         chat.setDes(des.toString());
                         chat.setReqid(reqid);
-                        chat.setStat(WxUtil.stat_ab);
-                        chat.setTyp(FriendUtil.typ_add_fri);
+                        chat.setBtyp(FriendUtil.typ_add_fri);
                         chat.setTim(tim);
                         chat.setUid(resid);
 
@@ -263,8 +262,8 @@ public class FriendManager {
         //用户行为让用户自己控制吧，接受信息烦了，就添加黑名单。   如果时间重复，表示服务器重复发送，app不再提示。
 
         ChatExample chatExample = new ChatExample();
-        chatExample.createCriteria().andUidEqualTo(chat.getUid())
-                .andReqidEqualTo(chat.getReqid()).andTypEqualTo(chat.getTyp());
+        chatExample.createCriteria().andUidEqualTo(chat.getUid())//优化。。。。
+                .andReqidEqualTo(chat.getReqid()).andBtypEqualTo(chat.getBtyp()); // 接收信息去重，从新设计吧。。。。。。。。。
 
         List<Chat> list = chatMapper.selectByExample(chatExample);
 
@@ -283,6 +282,7 @@ public class FriendManager {
                 chatMapper.insert(chat);
                 WxUtil.retWsByuid(false, chat.getUid(), to_res);
             } else {//等于一，对比时间和状态即可。
+                /*
                 if (WxUtil.stat_ab == list.get(0).getStat()) {//等待发送。（也不能删除，留着判断安全性。）
                     //忽略掉新的，留着旧请求。
                     WxUtil.retWsByuid(false, chat.getUid(), to_res);
@@ -296,6 +296,8 @@ public class FriendManager {
                         //客户端，接受到相同的请求后，应该发送"忽略旧请求"，以新请求为准。
                     }
                 }
+                */
+
             }
         }
     }
@@ -324,9 +326,9 @@ public class FriendManager {
             String reqid = into.get(FriendUtil.para_reqid).getAsString();
             String resid = into.get(FriendUtil.para_resid).getAsString();
 
-            ChatExample ce = new ChatExample();
+            ChatExample ce = new ChatExample();  //优化，，，当用户接收到信息后，就会删除此条信息，需要另存其他地方，安全验证也在其他地方即可。
             ce.createCriteria().andReqidEqualTo(reqid).andTimEqualTo(reqTim)
-                    .andUidEqualTo(resid).andTypEqualTo(FriendUtil.typ_add_fri);
+                    .andUidEqualTo(resid).andBtypEqualTo(FriendUtil.typ_add_fri);
 
             long count = chatMapper.countByExample(ce);
             if (count == 1) {
