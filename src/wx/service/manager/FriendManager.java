@@ -6,6 +6,7 @@ import wx.common.generator.active.Chat;
 import wx.common.generator.active.ChatExample;
 import wx.common.generator.active.ChatMapper;
 import wx.common.generator.base.*;
+import wx.common.utils_app.ChatUtil;
 import wx.common.utils_app.FriendUtil;
 import wx.common.utils_app.MineUtil;
 import wx.common.utils_server.RetNumUtil;
@@ -161,10 +162,8 @@ public class FriendManager {
             return jout;
         } else {
             String resid = into.get(FriendUtil.para_resid).getAsString();
-
             String reqid = into.get(FriendUtil.para_reqid).getAsString();
             String reqdes = into.get(FriendUtil.para_reqdes).getAsString();
-
             String met = into.get(FriendUtil.para_met).getAsString();
 
             if ("".equals(resid) || "".equals(reqid) || (!WxUtil.para_yes.equals(met) && !WxUtil.para_no.equals(met))) {
@@ -205,9 +204,11 @@ public class FriendManager {
                         des.addProperty(FriendUtil.para_met, met);
 
                         Chat chat = new Chat();
-                        chat.setDes(des.toString());
+
                         chat.setReqid(reqid);
                         chat.setBtyp(FriendUtil.typ_add_fri);
+                        chat.setDtyp(ChatUtil.typ_des_txt);
+                        chat.setDes(des.toString());
                         chat.setTim(tim);
                         chat.setUid(resid);
 

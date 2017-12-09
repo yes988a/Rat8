@@ -87,8 +87,12 @@ public class FriendUtil {
 
     //判断是否我的好友，并获取他的cid
     public final static String getUsimpleCid(String uid, String fid) {
-        ExtUrelationMapper extUrelationDao = SerUtil.SPRING.getBean(ExtUrelationMapper.class);
-        String cid = extUrelationDao.findUserCidByfid(uid, fid);
-        return cid;
+        if(fid==null || "".equals(fid)){
+            return null;
+        }else {
+            ExtUrelationMapper extUrelationDao = SerUtil.SPRING.getBean(ExtUrelationMapper.class);
+            String cid = extUrelationDao.findUserCidByfid(uid, fid);
+            return cid;
+        }
     }
 }
