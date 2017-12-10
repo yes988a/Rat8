@@ -78,6 +78,8 @@ public abstract class AbsSerHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object obj) throws Exception {
 
+        System.out.println("---channelReadchannel    Read------长连接个数：--------"+SerUtil.ctxSer.size());
+
         if (obj instanceof TextWebSocketFrame) {
             String msg = ((TextWebSocketFrame) obj).text();
             ReferenceCountUtil.release(obj);
@@ -96,6 +98,7 @@ public abstract class AbsSerHandler extends ChannelInboundHandlerAdapter {
         } else {
             ctx.close();
         }
+
     }
 
     //   http.....
@@ -323,12 +326,15 @@ public abstract class AbsSerHandler extends ChannelInboundHandlerAdapter {
             // app，app校验在http请求握手时。
             inner = false;
         }
+
+        System.out.println("---------长数连接------channelRegistered--"+SerUtil.ctxSer.size());
     }
 
     @Override
     public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
         //  这些地方有待优化，现在都是瞎写的，没考虑是否要进行其他handler中的方法。
         if (uuid != null && ctx == SerUtil.ctxSer.remove(uuid)) {
+            System.out.println("---111--channelUnregistered----长连接个数：--------"+SerUtil.ctxSer.size());
             super.channelUnregistered(ctx);
         } else {
             if (SerUtil.ctxSer.containsValue(ctx)) {
@@ -341,6 +347,7 @@ public abstract class AbsSerHandler extends ChannelInboundHandlerAdapter {
                     }
                 }
             }
+            System.out.println("---222--channelUnregistered----长连接个数：--------"+SerUtil.ctxSer.size());
             super.channelUnregistered(ctx);
         }
     }
