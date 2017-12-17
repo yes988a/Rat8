@@ -80,7 +80,7 @@ public class RegisterManager {
                     } else {
                         // 手机号发送，返回结果，和存储到pc端数据库，调用网络接口并且记录日志。
                         Boolean succ = TestnumUtil.insertVerification(TestnumUtil.redis_reg_temp, phone, u32);
-                        jout.addProperty(WxUtil.para_uuid, u32);
+                        jout.addProperty(TestnumUtil.para_testnum_random, u32);
                         TestnumUtil.retinsertVerification(succ, jout);
                         return jout;
                     }

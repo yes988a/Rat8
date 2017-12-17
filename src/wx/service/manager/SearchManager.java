@@ -63,11 +63,11 @@ public class SearchManager {
         JsonObject jout = new JsonObject();
         jout.addProperty(WxUtil.para_r, RetNumUtil.n_b1);
 
-        if (into.get(WxUtil.para_uuid) == null || "".equals(into.get(WxUtil.para_uuid).getAsString())) {
+        if (!into.has(SearchUtil.para_acc_or_phone)) {
             //严重错误。攻击？
             return jout;
         } else {
-            String accORphone = into.get(WxUtil.para_uuid).getAsString();
+            String accORphone = into.get(SearchUtil.para_acc_or_phone).getAsString();
 
             UsimpleTostrange uts = null;
             UserUniqueExample example = new UserUniqueExample();

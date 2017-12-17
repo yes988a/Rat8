@@ -46,7 +46,7 @@ public class ChatManager {
         JsonObject jout = new JsonObject();
 
         jout.addProperty(WxUtil.para_r, RetNumUtil.n_0);
-        jout.addProperty(WxUtil.para_json, new Gson().toJson(list));
+        jout.addProperty(ChatUtil.para_list_msg_json, new Gson().toJson(list));
 
         return jout;
     }
@@ -58,9 +58,9 @@ public class ChatManager {
 
         JsonObject jout = new JsonObject();
 
-        if (into.has(MineUtil.para_uid) && into.has(WxUtil.para_tim)) {
+        if (into.has(MineUtil.para_uid) && into.has(ChatUtil.para_del_tims_json)) {
             String uid = into.get(MineUtil.para_uid).getAsString();
-            String tims = into.get(WxUtil.para_tim).getAsString();
+            String tims = into.get(ChatUtil.para_del_tims_json).getAsString();
 
             if (tims.equals("[]")) { //为null，数据错误，加入黑名单。
                 jout.addProperty(WxUtil.para_r, RetNumUtil.n_b1);
