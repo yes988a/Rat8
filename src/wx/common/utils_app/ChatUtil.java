@@ -11,6 +11,9 @@ public class ChatUtil {
     //tim集合，删除已读消息使用
     public final static String para_del_tims_json = "di6h";
 
+    //新消息，时间，传给接受者服务器使用
+    public final static String para_tim_to_res_json = "8Ko0I";
+
     //chat内容集合
     public final static String para_list_msg_json = "lm39x";
 
@@ -28,7 +31,7 @@ public class ChatUtil {
     public final static int typ_des_file = 326;//附件
     public final static int typ_des_url = 486;//链接
 
-    // 内容类型
+    // 内容类型，参考方法testDesTyp
     public final static String para_chat_des_tif = "i5sv";
 
     //txt具体内容

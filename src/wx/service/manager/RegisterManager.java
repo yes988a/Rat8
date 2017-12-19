@@ -181,7 +181,7 @@ public class RegisterManager {
                                 JsonObject jo = new JsonObject();
                                 jo.addProperty(SerUtil.para_user_full, new Gson().toJson(userFull));
                                 jo.addProperty(SerUtil.para_user_unique, new Gson().toJson(unique));
-                                synBoo = SerUtil.sendOne(computer, jo, SerUtil.level_0, RegisterUtil.url_ser_userfull_syn, tim);
+                                synBoo = SerUtil.sendOne(computer, jo, SerUtil.level_0, RegisterUtil.url_ser_userfull_syn);
                             }
                             if (synBoo) {
                                 LoginUtil.returnApp(jout, computer);
@@ -210,7 +210,7 @@ public class RegisterManager {
 
         JsonObject jo = new JsonObject();
         jo.addProperty(SerUtil.para_user_unique, new Gson().toJson(unique));
-        SerUtil.sendMore(null, jo, SerUtil.level_0, RegisterUtil.url_ser_userUni_syn, unique.getPhoneTim());
+        SerUtil.sendMore(null, jo, SerUtil.level_0, RegisterUtil.url_ser_userUni_syn);
     }
 
     //同步uni。到全部服务器。
@@ -278,7 +278,7 @@ public class RegisterManager {
      */
     public JsonObject ser_use_acc(JsonObject into) {
 
-        String uuid = into.get(WxUtil.para_uuid).getAsString().trim();
+        String uuid_exist = into.get(AccountUtil.para_uuid_existAccForReg).getAsString().trim();
         String acc = into.get(AccountUtil.para_acc).getAsString().trim();
 
         UserUniqueExample uniExample = new UserUniqueExample();
@@ -290,12 +290,12 @@ public class RegisterManager {
             //因为时间不是同一个服务器获取，所以，比较时间大小有点行不通。
             //每一个注册时都去对比，如果，其他服务器返回已经使用，直接取消注册（再次注册竞争即可。）
 
-            jout.addProperty(WxUtil.para_uuid, uuid);
+            jout.addProperty(AccountUtil.para_uuid_existAccForReg, uuid_exist);
             jout.addProperty(AccountUtil.para_acc, acc);
             jout.addProperty(WxUtil.para_r, AccountUtil.url_ser_use_acc_exist);
             return jout;
         } else {
-            RedisUtil.setR(AccountUtil.redis_acc_tem + acc, uuid, RedisUtil.tim_r_10m);
+            RedisUtil.setR(AccountUtil.redis_acc_tem + acc, uuid_exist, RedisUtil.tim_r_10m);
             return null;
         }
     }
@@ -306,12 +306,11 @@ public class RegisterManager {
     public void ser_use_acc_exist(JsonObject into) {
 
         String acc = into.get(AccountUtil.para_acc).getAsString().trim();
-        String uuid = into.get(WxUtil.para_uuid).getAsString().trim();
+        String uuid_exist = into.get(AccountUtil.para_uuid_existAccForReg).getAsString().trim();
 
         RedisUtil.delR(TestnumUtil.redis_reg_temp + acc);
 
-        RedisUtil.setR(AccountUtil.redis_acc_tem + acc, uuid, RedisUtil.tim_r_10m);
-
+        RedisUtil.setR(AccountUtil.redis_acc_tem + acc, uuid_exist, RedisUtil.tim_r_10m);
     }
 
     /**
@@ -344,7 +343,8 @@ public class RegisterManager {
                     //这一步，并没有确定要使用此acc，所以，不能占用太长时间。
                     JsonObject jo = new JsonObject();
                     jo.addProperty(AccountUtil.para_acc, acc);  // 如果，其他服务发现注册过了，那么通知其他所有服务设置成""
-                    SerUtil.sendMore(null, jo, null, AccountUtil.url_ser_use_acc, tim);
+                    jo.addProperty(AccountUtil.para_uuid_existAccForReg, u32);  // 随机的一个id，用于判断操作的唯一性。
+                    SerUtil.sendMore(null, jo, null, AccountUtil.url_ser_use_acc);
                     return false;
                 }
             } else {

@@ -102,14 +102,13 @@ public class ChatManager {
             if (ChatUtil.testDesTyp(des_typ)) { // 不符合要求
                 return jout;
             } else {
+                long tim_chat = WxUtil.getTim();
                 String txt = into.get(ChatUtil.para_chat_txt).getAsString();
                 String res = into.get(ChatUtil.para_res).getAsString();
-
                 // 数据格式正确性判断。
-
                 Chat chat = new Chat();
                 chat.setUid(res);
-                chat.setTim(into.get(WxUtil.para_tim).getAsLong());
+                chat.setTim(tim_chat);
                 chat.setBtyp(ChatUtil.url_app_addChatsingle);
                 chat.setDtyp(des_typ);
                 chat.setReqid(uid);
@@ -122,8 +121,6 @@ public class ChatManager {
                     jout.addProperty(WxUtil.para_r, RetNumUtil.n_b1);
                     return jout;
                 } else {
-                    long tim = WxUtil.getTim();
-                    into.addProperty(WxUtil.para_tim, tim);
                     if (SerUtil.curCid.equals(cid)) {
                         chatMapper.insert(chat);
                         jout.addProperty(WxUtil.para_r, RetNumUtil.n_0);
@@ -137,8 +134,8 @@ public class ChatManager {
                             return jout;
                         } else {
                             JsonObject ser_single_toB = new JsonObject();
-                            ser_single_toB.addProperty(WxUtil.para_json, new Gson().toJson(chat));
-                            SerUtil.sendOne(computer, ser_single_toB, null, ChatUtil.url_ser_chat_single_fromA, tim);
+                            ser_single_toB.addProperty(ChatUtil.para_tim_to_res_json, new Gson().toJson(chat));
+                            SerUtil.sendOne(computer, ser_single_toB, null, ChatUtil.url_ser_chat_single_fromA);
                             jout.addProperty(WxUtil.para_r, RetNumUtil.n_0);
                             return jout;
                         }
@@ -153,8 +150,8 @@ public class ChatManager {
      */
     public JsonObject ser_getChatFromA(JsonObject into) {
         JsonObject jout = new JsonObject();
-        if (into.has(WxUtil.para_json)) {
-            String string = into.get(WxUtil.para_json).getAsString();
+        if (into.has(ChatUtil.para_tim_to_res_json)) {
+            String string = into.get(ChatUtil.para_tim_to_res_json).getAsString();
             Chat chat = new Gson().fromJson(string, Chat.class);
 
             //判断，好友是否存在此服务器。?????

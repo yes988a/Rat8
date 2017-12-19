@@ -53,6 +53,11 @@ public class MineUtil {
     public final static String para_uid = "U0D";
 
     /**
+     * 查询个人设置，返回的我的简单信息。
+     */
+    public final static String para_m_simple_json = "usR1D";
+
+    /**
      * 验证我的昵称，至少一位，最多18
      */
     public final static boolean testUserNickname(String name) {

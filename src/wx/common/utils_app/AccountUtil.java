@@ -10,12 +10,16 @@ import java.util.List;
  */
 public class AccountUtil {
 
-
     /* 账号 */
     public final static String para_acc = "a75c";
 
     // 注册，验证账号是否占用。
     public final static int url_ser_use_acc = 9062;
+
+    /**
+     * 注册时，判断账号存是否在时，判断操作的唯一性。
+     */
+    public final static String para_uuid_existAccForReg = "oU74L";
 
     // 账号占用。。
     public final static int url_ser_use_acc_exist = 3062;

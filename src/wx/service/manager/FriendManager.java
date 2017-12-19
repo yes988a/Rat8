@@ -63,7 +63,7 @@ public class FriendManager {
                 //日志，不应该出现，因为是app发起的删除，怎么可能不知道。
                 return jout;
             } else {
-                jout.addProperty(WxUtil.para_json, new Gson().toJson(simple));
+                jout.addProperty(FriendUtil.para_user_simple_json, new Gson().toJson(simple));
                 jout.addProperty(WxUtil.para_r, RetNumUtil.n_0);
                 return jout;
             }
@@ -141,17 +141,14 @@ public class FriendManager {
     public JsonObject app_requestFri_http(JsonObject into) {
 
         //问：：：：什么是已经被删除？ 正常好友？  我也删除啦对方？
-
         //关于是否本来就是friend。
         //请求者不关心，自己这里是否是friend。
         //在接收方，收到时判断，是否friend，情况如下：
         //如果本来就是正常好友：直接校验。
         //如果，对方删除啦，我，但是我没删除对方，直接提示已经添加成功可以chat啦。
         //如果不是Fri，收到请求通知。
-
         //同意添加判断如下：
         //仅仅校验，请求方，不管是否存在关系，直接改为正常状态即可。
-
         //缺少长度和格式判断。
 
         JsonObject jout = new JsonObject();
@@ -165,16 +162,13 @@ public class FriendManager {
             String reqid = into.get(FriendUtil.para_reqid).getAsString();
             String reqdes = into.get(FriendUtil.para_reqdes).getAsString();
             String met = into.get(FriendUtil.para_met).getAsString();
-
             if ("".equals(resid) || "".equals(reqid) || (!WxUtil.para_yes.equals(met) && !WxUtil.para_no.equals(met))) {
                 // 黑名单。
                 return jout;
             } else {
                 Long tim = WxUtil.getTim();
-
                 UsimpleTostrange reqDes = extUserFullMapper.findSimpleByUid(reqid);//查询自己的详情。
                 UserUnique resDes = userUniqueMapper.selectByPrimaryKey(resid);//请求者的详情。
-
                 if (reqDes == null) {//严重问题，只是断开连接应该不行。
                     // 黑名单。
                     return jout;
@@ -190,11 +184,8 @@ public class FriendManager {
                     key.setUid(reqid);
                     key.setFid(resid);
                     Urelation urelation = urelationMapper.selectByPrimaryKey(key);
-
-
                     // 请求页面（搜到：昵称，签名）
                     // 被请求页面：（账号，昵称，请求描述，是否认识,from从哪里来）
-
                     if (urelation == null || urelation.getDel() < 0) {
                         JsonObject des = new JsonObject();
 
@@ -217,8 +208,8 @@ public class FriendManager {
                             jout.addProperty(WxUtil.para_r, RetNumUtil.n_0);
                             return jout;
                         } else {
-                            jout.addProperty(WxUtil.para_json, new Gson().toJson(chat));
-                            SerUtil.sendOne(SerUtil.getComputer(resDes.getCid()), jout, SerUtil.level_0, FriendUtil.url_ser_ratToFriend, tim);
+                            jout.addProperty(FriendUtil.para_fri_req_json, new Gson().toJson(chat));
+                            SerUtil.sendOne(SerUtil.getComputer(resDes.getCid()), jout, SerUtil.level_0, FriendUtil.url_ser_ratToFriend);
                             //不等待，不等待，不等待好友服务器返回信息。
                             jout.addProperty(WxUtil.para_r, RetNumUtil.n_0);
                             return jout;
@@ -237,7 +228,7 @@ public class FriendManager {
     public void ser_ratToFriend(JsonObject into) {
         Chat chat = null;
         try {
-            chat = new Gson().fromJson(into.get(WxUtil.para_json).getAsString(), Chat.class);
+            chat = new Gson().fromJson(into.get(FriendUtil.para_fri_req_json).getAsString(), Chat.class);
         } catch (Exception e) {
         }
 
@@ -245,7 +236,7 @@ public class FriendManager {
         jout.addProperty(WxUtil.para_r, RetNumUtil.n_b1);
         if (chat == null) {
             //严重错误，记录日志
-            System.out.println("sendRat1ToFriend验证错误:" + into.get(WxUtil.para_json).getAsString());
+            System.out.println("sendRat1ToFriend验证错误:" + into.get(FriendUtil.para_fri_req_json).getAsString());
         } else {
             inner_friendSucc(chat);
             //应该统一：所有的回复，都是服务器间同一个回复，标识已经成功接受到信息，删除临时记录表fails_task信息。
@@ -271,7 +262,7 @@ public class FriendManager {
         JsonObject to_res = new JsonObject();
         to_res.addProperty(WxUtil.para_url, FriendUtil.url_ret_knownFri);
         to_res.addProperty(WxUtil.para_r, RetNumUtil.n_0);
-        to_res.addProperty(WxUtil.para_json, new Gson().toJson(chat));
+        to_res.addProperty(FriendUtil.para_fri_respone_json, new Gson().toJson(chat));
 
         if (list.size() == 0) {
             //发送给好友。
@@ -314,7 +305,7 @@ public class FriendManager {
         JsonObject jout = new JsonObject();
         jout.addProperty(WxUtil.para_r, RetNumUtil.n_b1);
 
-        if (into.get(WxUtil.para_tim) == null || into.get(FriendUtil.para_reqid) == null
+        if (into.get(FriendUtil.para_tim_respone) == null || into.get(FriendUtil.para_reqid) == null
                 || into.get(FriendUtil.para_resid) == null || into.get(FriendUtil.para_reqnickname) == null) {
 
             return jout;
@@ -323,7 +314,7 @@ public class FriendManager {
             //请求者描述，如果回复者更改啦成为备注也可以。
             String reqNick = into.get(FriendUtil.para_reqnickname).getAsString();
 
-            Long reqTim = into.get(WxUtil.para_tim).getAsLong();
+            Long reqTim = into.get(FriendUtil.para_tim_respone).getAsLong();
             String reqid = into.get(FriendUtil.para_reqid).getAsString();
             String resid = into.get(FriendUtil.para_resid).getAsString();
 
@@ -359,10 +350,10 @@ public class FriendManager {
                         // 通知，请求者服务器。
                         jout.addProperty(FriendUtil.para_resid, resid);
                         jout.addProperty(FriendUtil.para_reqid, reqid);
-                        jout.addProperty(WxUtil.para_tim, tim);
+                        jout.addProperty(FriendUtil.para_tim_succ_add, tim);
                         jout.addProperty(FriendUtil.para_resnickname, respFull.getNickname());
                         // 通知请求者服务器。
-                        SerUtil.sendOne(SerUtil.getComputer(reqUni.getCid()), jout, SerUtil.level_0, FriendUtil.url_ser_resToreq, tim);
+                        SerUtil.sendOne(SerUtil.getComputer(reqUni.getCid()), jout, SerUtil.level_0, FriendUtil.url_ser_resToreq);
 
                         jout.addProperty(WxUtil.para_r, RetNumUtil.n_0);
                         return jout;
@@ -385,7 +376,7 @@ public class FriendManager {
     public void ser_resToreq(JsonObject into) {
 
         if (into.get(FriendUtil.para_resid) == null || into.get(FriendUtil.para_resnickname) == null
-                || into.get(FriendUtil.para_reqid) == null || into.get(WxUtil.para_tim) == null) {
+                || into.get(FriendUtil.para_reqid) == null || into.get(FriendUtil.para_tim_succ_add) == null) {
             // 日志
         } else {
             String resid = into.get(FriendUtil.para_resid).getAsString();
@@ -395,8 +386,7 @@ public class FriendManager {
             } else {
                 String resnickname = into.get(FriendUtil.para_resnickname).getAsString();
                 String reqid = into.get(FriendUtil.para_reqid).getAsString();
-                Long tim = into.get(WxUtil.para_tim).getAsLong();
-
+                Long tim = into.get(FriendUtil.para_tim_succ_add).getAsLong();
                 insertFriend(reqid, resid, resUni.getCid(), resUni.getAcc(), resnickname, tim);//请求者服务器插入数据。
                 noticeReq(reqid, resid);
             }
@@ -439,7 +429,6 @@ public class FriendManager {
         JsonObject chat = new JsonObject();
         chat.addProperty(WxUtil.para_url, FriendUtil.url_ret_knownFri);
         chat.addProperty(FriendUtil.para_resid, resid);
-
         WxUtil.retWsByuid(false, uid, jout);//提前判断，没有发送成功选择怎么的处理。使用不同的appSendMsg
         //标记，新信息变化，暂放
     }
@@ -454,7 +443,7 @@ public class FriendManager {
         jout.addProperty(WxUtil.para_url, FriendUtil.url_app_delFriFrom);
 
         String uid = null;
-        if (into.get(WxUtil.para_tim) == null || into.get(FriendUtil.para_resid) == null || uid == null) {
+        if (into.get(FriendUtil.para_tim_req_del) == null || into.get(FriendUtil.para_resid) == null || uid == null) {
             return jout;
         } else {
             String resid = into.get(FriendUtil.para_resid).getAsString();
@@ -482,7 +471,7 @@ public class FriendManager {
                     JsonObject toFri = new JsonObject();
                     toFri.addProperty(FriendUtil.para_reqid, uid);
                     toFri.addProperty(FriendUtil.para_resid, resid);
-                    SerUtil.sendOne(SerUtil.getComputer(urelation.getCid()), toFri, SerUtil.level_0, FriendUtil.url_ser_delFriToRat2, WxUtil.getTim());
+                    SerUtil.sendOne(SerUtil.getComputer(urelation.getCid()), toFri, SerUtil.level_0, FriendUtil.url_ser_delFriToRat2);
                     return jout;
                 }
             }

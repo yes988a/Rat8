@@ -29,7 +29,7 @@ public class MineManager {
             return jout;
         } else {
             jout.addProperty(WxUtil.para_r, RetNumUtil.n_0);
-            jout.addProperty(WxUtil.para_json, new Gson().toJson(mySimple));
+            jout.addProperty(MineUtil.para_m_simple_json, new Gson().toJson(mySimple));
             return jout;
         }
     }

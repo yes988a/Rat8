@@ -30,6 +30,15 @@ public class PhoneUtil {
     //电话
     public final static String para_phone = "p0h";
 
+    //，随机UUID，解除电话号码绑定。返回给app
+    public final static String para_re_phone_random_uuid = "R37p";
+
+    //，时间，删除手机号使用，服务器间传送。
+    public final static String para_tim_ser_del = "X2dp";
+
+    // 修改手机号，服务器间传送，时间
+    public final static String para_tim_ser_update = "XM1ip";
+
     public final static boolean testPhone(String phone) {
         String regg = "^1\\d{10}";// 手机号简单验证
         boolean matches = phone.matches(regg);

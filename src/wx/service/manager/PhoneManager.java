@@ -56,9 +56,9 @@ public class PhoneManager {
                 // 不应该透漏，好友信息才对。
                 return jout;
             } else {
-                String uuid = WxUtil.getU32();
-                jout.addProperty(WxUtil.para_uuid, uuid);
-                Boolean succ = TestnumUtil.insertVerification(TestnumUtil.redis_remove_phone_temp, phone, uuid);
+                String uuid_remove_phone = WxUtil.getU32();
+                jout.addProperty(PhoneUtil.para_re_phone_random_uuid, uuid_remove_phone);
+                Boolean succ = TestnumUtil.insertVerification(TestnumUtil.redis_remove_phone_temp, phone, uuid_remove_phone);
                 TestnumUtil.retinsertVerification(succ, jout);
                 return jout;
             }
@@ -91,8 +91,8 @@ public class PhoneManager {
                     PhoneUtil.delPhone(phone, tim);
                     JsonObject jser = new JsonObject();
                     jser.addProperty(PhoneUtil.para_phone, phone);
-                    jser.addProperty(WxUtil.para_tim, tim);
-                    SerUtil.sendMore(null, jser, null, PhoneUtil.url_ser_del_phone, tim);
+                    jser.addProperty(PhoneUtil.para_tim_ser_del, tim);
+                    SerUtil.sendMore(null, jser, null, PhoneUtil.url_ser_del_phone);
 
                     jout.addProperty(WxUtil.para_r, RetNumUtil.n_0);
                     return jout;
@@ -128,10 +128,10 @@ public class PhoneManager {
                         JsonObject jup = new JsonObject();
                         jup.addProperty(PhoneUtil.para_phone, phone);
                         jup.addProperty(MineUtil.para_uid, uid);
-                        jup.addProperty(WxUtil.para_tim, tim);
+                        jup.addProperty(PhoneUtil.para_tim_ser_update, tim);
 
                         //通知所有其他服务器。
-                        SerUtil.sendMore(null, jup, SerUtil.level_0, PhoneUtil.url_ser_upda_phone, tim);
+                        SerUtil.sendMore(null, jup, SerUtil.level_0, PhoneUtil.url_ser_upda_phone);
 
                         return MineUtil.retMyset(update);
                     } else {
@@ -152,7 +152,7 @@ public class PhoneManager {
      * 单独的解除手机号。功能： 注册，
      */
     public void ser_del_phone(JsonObject into) {
-        if (into.get(PhoneUtil.para_phone) == null || into.get(WxUtil.para_tim) == null) {
+        if (into.get(PhoneUtil.para_phone) == null || into.get(PhoneUtil.para_tim_ser_del) == null) {
             // 日志，攻击？
         } else {
             String phone = into.get(PhoneUtil.para_phone).getAsString().trim();
@@ -167,13 +167,13 @@ public class PhoneManager {
     public void ser_upda_phone(JsonObject into) {
         if (into.get(PhoneUtil.para_phone) == null
                 || into.get(MineUtil.para_uid) == null
-                || into.get(WxUtil.para_tim) == null) {
+                || into.get(PhoneUtil.para_tim_ser_update) == null) {
 //日志。人工分析。
             //服务器间的交互，不能关闭。
         } else {
             String phone = into.get(PhoneUtil.para_phone).getAsString();
             String uid = into.get(MineUtil.para_uid).getAsString();
-            long tim = into.get(WxUtil.para_tim).getAsLong();
+            long tim = into.get(PhoneUtil.para_tim_ser_update).getAsLong();
 
             PhoneUtil.delPhone(phone, tim);
 

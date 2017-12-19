@@ -193,9 +193,9 @@ public class WxSerHandler extends AbsSerHandler {
                 default:
                     System.out.println(url + "没有");
             }
-            if (into.get(SerUtil.para_storage_id) != null) {
+            if (into.get(SerUtil.para_storage_need_return_id) != null) {
                 JsonObject jdel = new JsonObject();
-                jdel.addProperty(WxUtil.para_uuid, into.get(SerUtil.para_storage_id).getAsString());
+                jdel.addProperty(SerUtil.para_storage_return_id, into.get(SerUtil.para_storage_need_return_id).getAsString());
                 jdel.addProperty(WxUtil.para_url, SerUtil.url_ser_del_storage);
                 WxUtil.retWs(inner, ctx, jout);
             }

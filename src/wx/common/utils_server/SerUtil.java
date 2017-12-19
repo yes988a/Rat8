@@ -82,8 +82,14 @@ public class SerUtil {
     //1：发送----返回事变或者成功（不存储，不存储）（这种形式为了满足真正的得到啦消息，可以app只用长连接，等服务b返回给A，再给app最终结果。）
     public final static int level_0 = 0;
 
-    //storage的主键id，ser之间传送。（发出时传送para_storage_id，返回需要删除的数据时传送uuid）
-    public final static String para_storage_id = "s7i";
+    //storage的主键id，ser之间传送。需要被返回的主键id
+    public final static String para_storage_need_return_id = "ri3n1";
+
+    //storage的主键id，ser之间传送。返回时的主键，表示已经读取到这条数据。
+    public final static String para_storage_return_id = "9krK";
+
+    // ser之间传递，需要的时间标识。
+    public final static String para_storage_tim = "t2nke";
 
     //同步时使用，json的string
     public final static String para_user_full = "u2f";
@@ -157,10 +163,8 @@ public class SerUtil {
      *
      * @param cs 如果cids为null则发送给所有
      */
-    public final static void sendMore(List<Computer> cs, @NotNull JsonObject jo, Integer level, int url, Long tim) {
-        if (tim == null) {
-            tim = WxUtil.getTim();
-        }
+    public final static void sendMore(List<Computer> cs, @NotNull JsonObject jo, Integer level, int url) {
+        long sys_time = WxUtil.getTim();
         if (cs == null || cs.size() == 0) {
             List<Computer> list = null;
             try {
@@ -181,7 +185,7 @@ public class SerUtil {
                         SerUtil.servers.add(c33.getCid());
                         SerUtil.servers.add(c33.getPri());
 
-                        if (isGoodComputer(c33, tim)) {
+                        if (isGoodComputer(c33, sys_time)) {
                         } else {
                             //不符合要求
                             list.remove(x);// redis中去除不在时间范围内的。
@@ -190,16 +194,16 @@ public class SerUtil {
                 }
                 RedisUtil.setR(redis_computer_list, new Gson().toJson(list), RedisUtil.tim_r_30d);
             }
-            moreToOne(list,jo,level,url,tim);
+            moreToOne(list,jo,level,url);
         } else {
-            moreToOne(cs,jo,level,url,tim);
+            moreToOne(cs,jo,level,url);
         }
     }
-    //群发变单发
-    private static void moreToOne(List<Computer> list,JsonObject jo,Integer level,int url,long tim){
+    //群发变单发，jo存储自己的业务内容和时间。
+    private static void moreToOne(List<Computer> list,JsonObject jo,Integer level,int url){
         //群发处理。  待优化：关于不同业务处理，如群聊不能因为单个发送失败就返回给用户错误。如同步用户信息，某个服务器失败应该怎么处理。
         for (int y = list.size() - 1; y >= 0; y--) {
-            boolean num = sendOne(list.get(y), jo, level, url, tim);
+            boolean num = sendOne(list.get(y), jo, level, url);
             if (!num) {
                 RedisUtil.delR(redis_computer_list);
             }
@@ -215,50 +219,45 @@ public class SerUtil {
      * 区别：ChannelHandlerContext,见：retWs方法。
      *
      * @param computer
-     * @param jo       具体消息内容，不存储时间和业务等信息。
+     * @param jo       具体消息内容，存储自己的业务时间和业务等信息。
      * @param level    0：存--发送--不管是否成功（定时任务检测表）---接受者返回专业的业务信息来删除已经成功的sql
      *                 1：发送----返回事变或者成功（不存储，不存储）（这种形式为了满足真正的得到啦消息，可以app只用长连接，等服务b返回给A，再给app最终结果。）
      * @param url      业务 ，不可以为null
-     * @param tim      时间
      * @return, , ,-false发送失败(服务器错误、未知错误等)，ture成功(包括跳过自己)。
      * 成功，代表服务器是可用的，不一定是已经发送成功，如果没成功会自动再次发送
      * 模棱两可时，应该偏向与false.
      */
-    public final static boolean sendOne(@NotNull Computer computer, @NotNull JsonObject jo, Integer level, int url, Long tim) {
+    public final static boolean sendOne(@NotNull Computer computer, @NotNull JsonObject jo, Integer level, int url) {
 
         // 接受到信息后如何回执成功状态？ 主键UUID，和，url_ser_succ。待完善。
 
         if (SerUtil.curCid.equals(computer.getCid())) {
             return false;//跳过自己，对应返回结果，只要是1才是正确，0也是错误。
         } else {
-            if (tim == null) {
-                tim = WxUtil.getTim();
-            }
-            if (isGoodComputer(computer, tim)) {
 
+            long sys_time =  WxUtil.getTim();  // 不变更业务的时间，服务器间传递时间单独存储在para_storage_tim中。
+            if (isGoodComputer(computer, sys_time)) {
                 String uuid = null; // 随机标识。FailsTask主键。
                 if (level != null && level_0 == level) {
                     uuid = WxUtil.getU32();
-                    jo.addProperty(SerUtil.para_storage_id, uuid);
+                    jo.addProperty(para_storage_need_return_id, uuid);
                 }
-
-                jo.addProperty(WxUtil.para_tim, tim);
+                jo.addProperty(para_storage_tim, sys_time);
                 jo.addProperty(WxUtil.para_url, url);
-
                 ChannelHandlerContext cf = SerUtil.ctxCli.get(computer.getCid());
                 if (cf != null && cf.channel().isActive()) {
                     if (uuid != null) {
-                        insertFails(uuid, computer.getCid(), url, tim, jo);
+                        insertFails(uuid, computer.getCid(), url, sys_time, jo);
                     }
                     cf.writeAndFlush(new TextWebSocketFrame(jo.toString()));
                     return true;
                 } else {
                     //纠错，处理
                     //有可能是从redis中取得数据，时间问题，也可能是服务器时间更新存在时间差。
-                    boolean bb = connectServer(computer, tim);
+                    boolean bb = connectServer(computer, sys_time);
                     if (bb) {
                         if (uuid != null) {
-                            insertFails(uuid, computer.getCid(), url, tim, jo);
+                            insertFails(uuid, computer.getCid(), url, sys_time, jo);
                         }
                         cf.writeAndFlush(new TextWebSocketFrame(jo.toString()));
                         return true;

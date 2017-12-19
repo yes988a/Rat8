@@ -72,8 +72,26 @@ public class FriendUtil {
     //回复者昵称
     public final static String para_resnickname = "Fn1s";
 
+    //添加成功，回复给请求者服务器。时间
+    public final static String para_tim_succ_add = "T85S";
+
+    //删除请求，接受到APP的时间。
+    public final static String para_tim_req_del = "Bd3y";
+
     //请求方，申请描述
     public final static String para_reqdes = "Q5L";
+
+    //同意添加好友，时间
+    public final static String para_tim_respone = "m10L";
+
+    //查询好友简单信息时返回。。。
+    public final static String para_user_simple_json = "oj48";
+
+    //好友请求，服务器间传递的好友简单信息json
+    public final static String para_fri_req_json = "sdf2";
+
+    //同意添加好友，chat内容。ws返回给app
+    public final static String para_fri_respone_json = "sked";
 
     //添加好友请求。
     public final static int typ_add_fri = 571;

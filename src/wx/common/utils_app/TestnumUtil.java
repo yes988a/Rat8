@@ -21,6 +21,16 @@ public class TestnumUtil {
      */
     public final static String para_testnum = "T04n";
 
+    /**
+     * 服务器间传送的主键。手机号？邮箱？等。
+     */
+    public final static String para_ser_phone_email = "U295E";
+
+    /**
+     * 验证码创建时间。。
+     */
+    public final static String para_tim_ser_create = "C5st";
+
     //随机一个UUID，获取验证码操作返回给app
     public final static String para_testnum_random = "roc5n";
 
@@ -42,10 +52,10 @@ public class TestnumUtil {
      *
      * @param url_redis    使用范围。:如：redis_reg_temp
      * @param phoneOrEmail 手机号，邮箱
-     * @param uuid         随机ID，防止用户验证码在其他地方使用。   也防止在其他业务使用。
+     * @param uuid_remove_phone         随机ID，防止用户验证码在其他地方使用。   也防止在其他业务使用。
      * @return 可能为null。true成功，false发送失败，null次数太多或者格式错误。
      */
-    public final synchronized static Boolean insertVerification(String url_redis, String phoneOrEmail, String uuid) {
+    public final synchronized static Boolean insertVerification(String url_redis, String phoneOrEmail, String uuid_remove_phone) {
         Integer num = 0;
         try {
             String numTim = RedisUtil.getR(redis_test_num + phoneOrEmail, null);
@@ -53,7 +63,7 @@ public class TestnumUtil {
         } catch (Exception e) {
         }
 
-        long tim = WxUtil.getTim();
+        long tim_create = WxUtil.getTim();
 
         if (num != null && num > RetNumUtil.n_3) {
             return null;
@@ -72,13 +82,12 @@ public class TestnumUtil {
 
                 if (sendSucc) { //发送成功。
                     RedisUtil.setR(url_redis + phoneOrEmail,
-                            DigestUtils.md5Hex(uuid + testnum), RedisUtil.tim_r_15m);
-
-                    updateVerificationNum(phoneOrEmail, tim, num);
+                            DigestUtils.md5Hex(uuid_remove_phone + testnum), RedisUtil.tim_r_15m);
+                    updateVerificationNum(phoneOrEmail, tim_create, num);
                     JsonObject jser = new JsonObject();
-                    jser.addProperty(WxUtil.para_uuid, phoneOrEmail);//其实是，phoneOrEmail
-                    SerUtil.sendMore(null, jser, null, url_ser_syn_testSfe, tim);
-
+                    jser.addProperty(TestnumUtil.para_tim_ser_create,tim_create);
+                    jser.addProperty(TestnumUtil.para_ser_phone_email, phoneOrEmail);//其实是，phoneOrEmail
+                    SerUtil.sendMore(null, jser, null, url_ser_syn_testSfe);
                     return true;
                 } else {
                     return false;
@@ -121,15 +130,15 @@ public class TestnumUtil {
     }
 
     //更新发送验证码的次数，（安全验证使用。）各个服务器间要同是更新。。
-    public final static void updateVerificationNum(String phoneOrEmail, long tim, Integer num) {
+    public final static void updateVerificationNum(String phoneOrEmail, long tim_create, Integer num) {
         String numTim = RedisUtil.getR(redis_test_num + phoneOrEmail, null);
         if (RedisUtil.val_error.equals(numTim)) {
 
         } else if (numTim == null) {
             RedisUtil.setR(redis_test_num + phoneOrEmail,
-                    1 + "&" + tim, RedisUtil.tim_r_15m);
-            inner_update_sql(phoneOrEmail, tim);
-        } else if (!numTim.startsWith(tim + "")) {
+                    1 + "&" + tim_create, RedisUtil.tim_r_15m);
+            inner_update_sql(phoneOrEmail, tim_create);
+        } else if (!numTim.startsWith(tim_create + "")) {
             if (num == null) {
                 try {
                     num = 0;
@@ -138,8 +147,8 @@ public class TestnumUtil {
                 }
             }
             RedisUtil.setR(redis_test_num + phoneOrEmail,
-                    (num + 1) + "&" + tim, RedisUtil.tim_r_15m);
-            inner_update_sql(phoneOrEmail, tim);
+                    (num + 1) + "&" + tim_create, RedisUtil.tim_r_15m);
+            inner_update_sql(phoneOrEmail, tim_create);
         }
     }
 
