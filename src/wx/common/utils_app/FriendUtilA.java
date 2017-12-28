@@ -4,7 +4,7 @@ import wx.common.utils_server.SerUtil;
 import wx.service.dao.ExtUrelationMapper;
 
 //url中app请求，也作为回复app的标识。
-public class FriendUtil {
+public class FriendUtilA {
 
     //查询单个好友设置
     public final static int url_app_findUserrelation = 9233;

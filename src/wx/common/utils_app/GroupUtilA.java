@@ -1,6 +1,6 @@
 package wx.common.utils_app;
 
-public class GroupUtil {
+public class GroupUtilA {
     //查询我的群列表简单信息.。
     public final static int url_app_findGroupSimples = 9456;
 

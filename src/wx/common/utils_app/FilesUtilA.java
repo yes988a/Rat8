@@ -2,7 +2,7 @@ package wx.common.utils_app;
 
 import java.io.File;
 
-public class FilesUtil {
+public class FilesUtilA {
 
     /**
      * 临时图片,聊天图片

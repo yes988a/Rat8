@@ -32,18 +32,18 @@ public class GroupManager {
 
     //查询群成员简单信息。
     public void app_findGroupUsersSimple(String uid, JsonObject jo) {
-        if (jo.get(GroupUtil.para_gid) == null) {
+        if (jo.get(GroupUtilA.para_gid) == null) {
             WxUtil.appClose(uid);
         } else {
             JsonObject jout = new JsonObject();
             GuserExample example = new GuserExample();
-            example.createCriteria().andGidEqualTo(jo.get(GroupUtil.para_gid).getAsString()).andUidEqualTo(uid);
+            example.createCriteria().andGidEqualTo(jo.get(GroupUtilA.para_gid).getAsString()).andUidEqualTo(uid);
             long ll = guserDao.countByExample(example);
             if (ll == 0) {
                 //不是群成员，可能已经别删除，但是客户端还没有更新。n_21
                 jout.addProperty(WxUtil.para_r, RetNumUtil.n_21);
             } else {
-                List<GuserSimple> list = extGuserDao.findGroupUsersSimple(jo.get(GroupUtil.para_gid).getAsString());
+                List<GuserSimple> list = extGuserDao.findGroupUsersSimple(jo.get(GroupUtilA.para_gid).getAsString());
                 jout.addProperty(WxUtil.para_r, RetNumUtil.n_0);
                 jout.addProperty(WxUtil.para_json, new Gson().toJson(list));
             }
@@ -56,19 +56,19 @@ public class GroupManager {
     //不需要通知其他sql
     //修改，群备注。
     public void app_updateGroupRemark(String uid, JsonObject jo) {
-        if (uid == null || jo.get(GroupUtil.para_gid) == null || jo.get(GroupUtil.para_gropremark) == null) {
+        if (uid == null || jo.get(GroupUtilA.para_gid) == null || jo.get(GroupUtilA.para_gropremark) == null) {
             WxUtil.appClose(uid);
         } else {
-            String gid = jo.get(GroupUtil.para_gid).getAsString();
+            String gid = jo.get(GroupUtilA.para_gid).getAsString();
 
             Guser guser = new Guser();
             setGuserKey(guser, uid, gid);
-            guser.setGremark(jo.get(GroupUtil.para_gropremark).getAsString());
+            guser.setGremark(jo.get(GroupUtilA.para_gropremark).getAsString());
             guserDao.updateByPrimaryKeySelective(guser);
             JsonObject jout = new JsonObject();
             jout.addProperty(WxUtil.para_r, RetNumUtil.n_0);
-            jout.addProperty(WxUtil.para_url, GroupUtil.url_app_updateGroupRemark);
-            jout.addProperty(GroupUtil.para_gid, gid);
+            jout.addProperty(WxUtil.para_url, GroupUtilA.url_app_updateGroupRemark);
+            jout.addProperty(GroupUtilA.para_gid, gid);
             WxUtil.appSendMsg(uid, jout);
         }
     }
@@ -76,42 +76,42 @@ public class GroupManager {
     //需要通知，其他服务器sql
     //修改，我在群中的备注。
     public void app_updateUserRemark(String uid, JsonObject jo) {
-        if (uid == null || jo.get(GroupUtil.para_gid) == null || jo.get(GroupUtil.para_userremark) == null) {
+        if (uid == null || jo.get(GroupUtilA.para_gid) == null || jo.get(GroupUtilA.para_userremark) == null) {
             WxUtil.appClose(uid);
         } else {
-            String gid = jo.get(GroupUtil.para_gid).getAsString();
+            String gid = jo.get(GroupUtilA.para_gid).getAsString();
 
             Guser guser = new Guser();
             setGuserKey(guser, uid, gid);
-            guser.setUremark(jo.get(GroupUtil.para_userremark).getAsString());
+            guser.setUremark(jo.get(GroupUtilA.para_userremark).getAsString());
             guserDao.updateByPrimaryKeySelective(guser);
 
             //群的发送，封装。
-            jo.addProperty(WxUtil.para_url, GroupUtil.url_ser_updateUserRemark);
-            GroupUtil.sendMsg(gid, jo, WxUtil.getTim());
+            jo.addProperty(WxUtil.para_url, GroupUtilA.url_ser_updateUserRemark);
+            GroupUtilA.sendMsg(gid, jo, WxUtil.getTim());
 
             JsonObject jout = new JsonObject();
             jout.addProperty(WxUtil.para_r, RetNumUtil.n_0);
-            jout.addProperty(WxUtil.para_url, GroupUtil.url_app_updateUserRemark);
-            jout.addProperty(GroupUtil.para_gid, gid);
+            jout.addProperty(WxUtil.para_url, GroupUtilA.url_app_updateUserRemark);
+            jout.addProperty(GroupUtilA.para_gid, gid);
             WxUtil.appSendMsg(uid, jout);
         }
     }
 
     //修改，群通知。
     public void app_updateShie(String uid, JsonObject jo) {
-        if (uid == null || jo.get(GroupUtil.para_gid) == null || jo.get(GroupUtil.para_groupshie) == null) {
+        if (uid == null || jo.get(GroupUtilA.para_gid) == null || jo.get(GroupUtilA.para_groupshie) == null) {
             WxUtil.appClose(uid);
         } else {
-            String gid = jo.get(GroupUtil.para_gid).getAsString();
+            String gid = jo.get(GroupUtilA.para_gid).getAsString();
             Guser guser = new Guser();
             setGuserKey(guser, uid, gid);
-            guser.setShie(jo.get(GroupUtil.para_groupshie).getAsInt());
+            guser.setShie(jo.get(GroupUtilA.para_groupshie).getAsInt());
             guserDao.updateByPrimaryKeySelective(guser);
             JsonObject jout = new JsonObject();
             jout.addProperty(WxUtil.para_r, RetNumUtil.n_0);
-            jout.addProperty(WxUtil.para_url, GroupUtil.url_app_updateShie);
-            jout.addProperty(GroupUtil.para_gid, gid);
+            jout.addProperty(WxUtil.para_url, GroupUtilA.url_app_updateShie);
+            jout.addProperty(GroupUtilA.para_gid, gid);
             WxUtil.appSendMsg(uid, jout);
         }
     }
@@ -143,7 +143,7 @@ public class GroupManager {
 
             JsonObject jout = new JsonObject();
             jout.addProperty(WxUtil.para_r, RetNumUtil.n_0);
-            jout.addProperty(GroupUtil.para_gid, gid);
+            jout.addProperty(GroupUtilA.para_gid, gid);
             WxUtil.appSendMsg(uid, jout);
         }
     }
@@ -152,12 +152,12 @@ public class GroupManager {
     // 邀请好友加入群（通知其他服务器。发送信息时每次都带群成员数目，来验证群成员是否正确，如果不正确？对比缺少谁？然后到相应人员服务器为准。（入校验系统。）。）
     public void app_invitation(String uid, JsonObject jo) {
 
-        if (jo.get(GroupUtil.para_gid) == null || jo.get(FriendUtil.para_fids) == null) {
+        if (jo.get(GroupUtilA.para_gid) == null || jo.get(FriendUtilA.para_fids) == null) {
             //日志
         } else {
             Set<String> fids = null;
             try {
-                fids = new Gson().fromJson(jo.get(FriendUtil.para_fids).getAsString(), HashSet.class);
+                fids = new Gson().fromJson(jo.get(FriendUtilA.para_fids).getAsString(), HashSet.class);
             } catch (Exception e) {
             }
 
@@ -165,7 +165,7 @@ public class GroupManager {
                 //日志
             } else {
                 long tim = WxUtil.getTim();
-                String gid = jo.get(FriendUtil.para_fids).getAsString();
+                String gid = jo.get(FriendUtilA.para_fids).getAsString();
                 //我在群中。
                 GuserKey key = new GuserKey();
                 key.setGid(gid);
@@ -214,7 +214,7 @@ public class GroupManager {
                         }
                     }
                     JsonObject joooo = new JsonObject();
-                    joooo.addProperty(WxUtil.para_url, GroupUtil.url_ser_insertGusers);
+                    joooo.addProperty(WxUtil.para_url, GroupUtilA.url_ser_insertGusers);
                     joooo.addProperty(WxUtil.para_json, new Gson().toJson(end));
 
                     allCidMore.addAll(allCid);
@@ -231,20 +231,20 @@ public class GroupManager {
 
     //自己退出群，没有被群主删除使用此方法 (删除群某条信息)
     public void app_quitGroup(String uid, JsonObject jo) {
-        if (jo.get(GroupUtil.para_gid) == null) {
+        if (jo.get(GroupUtilA.para_gid) == null) {
             //日志
         } else {
             GuserKey key = new GuserKey();
             key.setUid(uid);
-            key.setGid(jo.get(GroupUtil.para_gid).getAsString());
+            key.setGid(jo.get(GroupUtilA.para_gid).getAsString());
 
             int del = guserDao.deleteByPrimaryKey(key);
             if (del == 1) {
-                jo.addProperty(WxUtil.para_url, GroupUtil.url_ser_delGuserOne);
-                GroupUtil.sendMsg(jo.get(GroupUtil.para_gid).getAsString(), jo, WxUtil.getTim());
+                jo.addProperty(WxUtil.para_url, GroupUtilA.url_ser_delGuserOne);
+                GroupUtilA.sendMsg(jo.get(GroupUtilA.para_gid).getAsString(), jo, WxUtil.getTim());
             } else {
                 //日志
-                System.out.println("发起，，退群失败。" + uid + "" + jo.get(GroupUtil.para_gid).getAsString() + ".....");
+                System.out.println("发起，，退群失败。" + uid + "" + jo.get(GroupUtilA.para_gid).getAsString() + ".....");
             }
         }
     }
@@ -283,28 +283,28 @@ public class GroupManager {
 
     //修改我在群中的备注(修改更新群某条信息)
     public void ser_updateUserRemark(String uid, JsonObject jo) {
-        if (jo.get(GroupUtil.para_gid) == null || jo.get(GroupUtil.para_userremark) == null) {
+        if (jo.get(GroupUtilA.para_gid) == null || jo.get(GroupUtilA.para_userremark) == null) {
             //日志，错误。攻击？
         } else {
             Guser guser = new Guser();
-            setGuserKey(guser, uid, jo.get(GroupUtil.para_gid).getAsString());
-            guser.setUremark(jo.get(GroupUtil.para_userremark).getAsString());
+            setGuserKey(guser, uid, jo.get(GroupUtilA.para_gid).getAsString());
+            guser.setUremark(jo.get(GroupUtilA.para_userremark).getAsString());
             guserDao.updateByPrimaryKeySelective(guser);
         }
     }
 
     //(删除群某条信息)
     public void ser_delGuserOne(String uid, JsonObject jo) {
-        if (jo.get(GroupUtil.para_gid) == null) {
+        if (jo.get(GroupUtilA.para_gid) == null) {
             //日志
         } else {
             GuserKey key = new GuserKey();
             key.setUid(uid);
-            key.setGid(jo.get(GroupUtil.para_gid).getAsString());
+            key.setGid(jo.get(GroupUtilA.para_gid).getAsString());
             int del = guserDao.deleteByPrimaryKey(key);
             if (del != 1) {
                 //日志
-                System.out.println("同步，，退群失败。" + uid + "" + jo.get(GroupUtil.para_gid).getAsString() + ".....");
+                System.out.println("同步，，退群失败。" + uid + "" + jo.get(GroupUtilA.para_gid).getAsString() + ".....");
             }
         }
     }
@@ -314,12 +314,12 @@ public class GroupManager {
     //投票定时。
     //修改，群名称。（群主权限）（等同于发送啦一条特殊聊天记录。具体更新由定时任务来做）
     public void app_updateGname(String uid, JsonObject jo) {
-        if (uid == null || jo.get(GroupUtil.para_gid) == null || jo.get(GroupUtil.para_groupname) == null) {
+        if (uid == null || jo.get(GroupUtilA.para_gid) == null || jo.get(GroupUtilA.para_groupname) == null) {
             WxUtil.appClose(uid);
         } else {
             Guser guser = new Guser();
-            setGuserKey(guser, uid, jo.get(GroupUtil.para_gid).getAsString());
-            guser.setGname(jo.get(GroupUtil.para_groupname).getAsString());
+            setGuserKey(guser, uid, jo.get(GroupUtilA.para_gid).getAsString());
+            guser.setGname(jo.get(GroupUtilA.para_groupname).getAsString());
             guserDao.updateByPrimaryKeySelective(guser);
             //通知其他
         }
@@ -328,12 +328,12 @@ public class GroupManager {
     //投票定时。
     //保存群公告。（群主权限）（等同于发送啦一条特殊聊天记录。具体更新由定时任务来做）
     public void app_updateGotice(String uid, JsonObject jo) {
-        if (uid == null || jo.get(GroupUtil.para_gid) == null || jo.get(GroupUtil.para_groupnotice) == null) {
+        if (uid == null || jo.get(GroupUtilA.para_gid) == null || jo.get(GroupUtilA.para_groupnotice) == null) {
             WxUtil.appClose(uid);
         } else {
             Guser guser = new Guser();
-            setGuserKey(guser, uid, jo.get(GroupUtil.para_gid).getAsString());
-            guser.setGotice(jo.get(GroupUtil.para_groupnotice).getAsString());
+            setGuserKey(guser, uid, jo.get(GroupUtilA.para_gid).getAsString());
+            guser.setGotice(jo.get(GroupUtilA.para_groupnotice).getAsString());
             guserDao.updateByPrimaryKeySelective(guser);
             //通知其他
         }

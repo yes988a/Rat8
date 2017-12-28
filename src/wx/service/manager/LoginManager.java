@@ -6,9 +6,9 @@ import org.apache.commons.codec.digest.DigestUtils;
 import wx.common.entity.LoginCompeletePojo;
 import wx.common.entity.UserrelationSimple;
 import wx.common.generator.base.*;
-import wx.common.utils_app.AccountUtil;
-import wx.common.utils_app.LoginUtil;
-import wx.common.utils_app.MineUtil;
+import wx.common.utils_app.AccountUtilA;
+import wx.common.utils_app.LoginUtilA;
+import wx.common.utils_app.MineUtilA;
 import wx.common.utils_server.AESUtil;
 import wx.common.utils_server.RetNumUtil;
 import wx.common.utils_server.SerUtil;
@@ -49,13 +49,13 @@ public class LoginManager {
 
         JsonObject jout = new JsonObject();
 
-        String acc = into.get(AccountUtil.para_acc).getAsString().trim();
-        UserUnique unique = AccountUtil.existAcc(acc);
+        String acc = into.get(AccountUtilA.para_acc).getAsString().trim();
+        UserUnique unique = AccountUtilA.existAcc(acc);
         if (unique == null) {
             jout.addProperty(WxUtil.para_r, RetNumUtil.n_23);//账号错误。
             return jout;
         } else {
-            LoginUtil.returnApp(jout, SerUtil.getComputer(unique.getCid()));
+            LoginUtilA.returnApp(jout, SerUtil.getComputer(unique.getCid()));
             return jout;
         }
     }
@@ -70,12 +70,12 @@ public class LoginManager {
         jout.addProperty(WxUtil.para_r, RetNumUtil.n_b1);
         long tim = WxUtil.getTim();
 
-        if (into.get(AccountUtil.para_acc) == null || into.get(MineUtil.para_pas) == null) { //还应该有一些其他信息，安全信息。后续增加.
+        if (into.get(AccountUtilA.para_acc) == null || into.get(MineUtilA.para_pas) == null) { //还应该有一些其他信息，安全信息。后续增加.
             return jout;
         } else {
-            String acc = into.get(AccountUtil.para_acc).getAsString();
-            String pas = into.get(MineUtil.para_pas).getAsString();
-            if (AccountUtil.testAcc(acc) && WxUtil.testPass(pas)) {
+            String acc = into.get(AccountUtilA.para_acc).getAsString();
+            String pas = into.get(MineUtilA.para_pas).getAsString();
+            if (AccountUtilA.testAcc(acc) && WxUtil.testPass(pas)) {
 
                 LoginCompeletePojo lup = extUserFullMapper.loginCompelete(acc, pas);
 
@@ -107,15 +107,15 @@ public class LoginManager {
 
                     List<UserrelationSimple> list = extUrelationMapper.findUserrelations(lup.getUid());
 
-                    jout.addProperty(LoginUtil.para_fri_list, new Gson().toJson(list));
+                    jout.addProperty(LoginUtilA.para_fri_list, new Gson().toJson(list));
 
                     //不需要返回urlIP地址，因为，它已经在访问
-                    jout.addProperty(LoginUtil.para_login_aes, aesuuid);
-                    jout.addProperty(LoginUtil.para_login_tid, token);
-                    jout.addProperty(LoginUtil.para_login_ctim, lup.getCreate_time());//应该配合ranid加密使用。
-                    jout.addProperty(MineUtil.para_uid, lup.getUid());
-                    jout.addProperty(MineUtil.para_nickname, lup.getNickname());
-                    jout.addProperty(MineUtil.para_sound, lup.getSound());
+                    jout.addProperty(LoginUtilA.para_login_aes, aesuuid);
+                    jout.addProperty(LoginUtilA.para_login_tid, token);
+                    jout.addProperty(LoginUtilA.para_login_ctim, lup.getCreate_time());//应该配合ranid加密使用。
+                    jout.addProperty(MineUtilA.para_uid, lup.getUid());
+                    jout.addProperty(MineUtilA.para_nickname, lup.getNickname());
+                    jout.addProperty(MineUtilA.para_sound, lup.getSound());
                     jout.addProperty(WxUtil.para_r, RetNumUtil.n_0);
                     // app需要自己合成两个参数：randomid是aes和token的Md5，aes是给app的aes加createTime生成的密钥
                     return jout;

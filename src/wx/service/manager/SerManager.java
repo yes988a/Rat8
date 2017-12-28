@@ -3,7 +3,6 @@ package wx.service.manager;
 import com.google.gson.JsonObject;
 import wx.common.generator.active.StorageTaskMapper;
 import wx.common.utils_server.SerUtil;
-import wx.common.utils_server.WxUtil;
 
 import javax.annotation.Resource;
 

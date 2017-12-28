@@ -1,6 +1,6 @@
 package wx.common.utils_app;
 
-public class ChatUtil {
+public class ChatUtilA {
 
     //请求者ID
     public final static String para_req = "r74qm";

@@ -15,8 +15,8 @@ import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.util.ReferenceCountUtil;
 import wx.common.generator.base.*;
-import wx.common.utils_app.LoginUtil;
-import wx.common.utils_app.MineUtil;
+import wx.common.utils_app.LoginUtilA;
+import wx.common.utils_app.MineUtilA;
 import wx.common.utils_server.*;
 
 import java.util.Iterator;
@@ -132,11 +132,11 @@ public abstract class AbsSerHandler extends ChannelInboundHandlerAdapter {
                                 ReferenceCountUtil.release(fullhttp);
 
                                 //测试时，全获取Wxutil.para_uid
-                                if (into.has(LoginUtil.para_login_tid)) {  //已经登录操作。0000000000000000000
+                                if (into.has(LoginUtilA.para_login_tid)) {  //已经登录操作。0000000000000000000
 
-                                    String tid = into.get(LoginUtil.para_login_tid).getAsString();
+                                    String tid = into.get(LoginUtilA.para_login_tid).getAsString();
                                     //在aes没有变之前每次都成固定的啦，不对。
-                                    String uidaes = into.get(LoginUtil.para_login_aes_safedes).getAsString();
+                                    String uidaes = into.get(LoginUtilA.para_login_aes_safedes).getAsString();
 
                                     LoginExample exampleLogin = new LoginExample();
                                     exampleLogin.createCriteria().andTidEqualTo(tid);
@@ -211,8 +211,8 @@ public abstract class AbsSerHandler extends ChannelInboundHandlerAdapter {
 
                                 //这里仅仅接受登录后，断开从新连接的操作。采用握手前验证，握手成功代表已经成功。
                                 //握手时安全验证，采用http结合，需要在握手前先发送一次http，返回成功后，在尝试长连接（带有http的返回标识）
-                                if (into.has(MineUtil.para_uid)) {
-                                    uuid = into.get(MineUtil.para_uid).getAsString();
+                                if (into.has(MineUtilA.para_uid)) {
+                                    uuid = into.get(MineUtilA.para_uid).getAsString();
                                     woshou(ctx, fullhttp);
                                 } else {
                                     ctx.close();

@@ -27,7 +27,7 @@ import java.util.List;
  * <p>
  * type类型区分：typ_
  */
-public class RegisterUtil {
+public class RegisterUtilA {
 
     //register 手机验证码。
     public final static int url_app_testnum = 2588;

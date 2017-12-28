@@ -5,10 +5,10 @@ import wx.common.generator.base.Computer;
 import wx.common.generator.base.UserUnique;
 import wx.common.generator.base.UserUniqueExample;
 import wx.common.generator.base.UserUniqueMapper;
-import wx.common.utils_app.AccountUtil;
-import wx.common.utils_app.PhoneUtil;
-import wx.common.utils_app.SearchUtil;
-import wx.common.utils_app.MineUtil;
+import wx.common.utils_app.AccountUtilA;
+import wx.common.utils_app.PhoneUtilA;
+import wx.common.utils_app.SearchUtilA;
+import wx.common.utils_app.MineUtilA;
 import wx.common.utils_server.RetNumUtil;
 import wx.common.utils_server.SerUtil;
 import wx.common.utils_server.WxUtil;
@@ -63,18 +63,18 @@ public class SearchManager {
         JsonObject jout = new JsonObject();
         jout.addProperty(WxUtil.para_r, RetNumUtil.n_b1);
 
-        if (!into.has(SearchUtil.para_acc_or_phone)) {
+        if (!into.has(SearchUtilA.para_acc_or_phone)) {
             //严重错误。攻击？
             return jout;
         } else {
-            String accORphone = into.get(SearchUtil.para_acc_or_phone).getAsString();
+            String accORphone = into.get(SearchUtilA.para_acc_or_phone).getAsString();
 
             UsimpleTostrange uts = null;
             UserUniqueExample example = new UserUniqueExample();
-            if (AccountUtil.testAcc(accORphone)) {
+            if (AccountUtilA.testAcc(accORphone)) {
                 uts = extUserFullMapper.findSimpleByacc(accORphone);
                 example.createCriteria().andAccEqualTo(accORphone);
-            } else if (PhoneUtil.testPhone(accORphone)) {
+            } else if (PhoneUtilA.testPhone(accORphone)) {
                 uts = extUserFullMapper.findSimpleByphone(accORphone);
                 example.createCriteria().andPhoneEqualTo(accORphone);
             }
@@ -96,7 +96,7 @@ public class SearchManager {
             jout.addProperty(WxUtil.para_r, RetNumUtil.n_8);
         } else {
             Computer computer = SerUtil.getComputer(list.get(0).getCid());
-            jout.addProperty(SearchUtil.para_ipp, computer.getIp());
+            jout.addProperty(SearchUtilA.para_ipp, computer.getIp());
             jout.addProperty(WxUtil.para_r, RetNumUtil.n_0);
         }
     }
@@ -108,9 +108,9 @@ public class SearchManager {
             jout.addProperty(WxUtil.para_r, RetNumUtil.n_8);
 
         } else {
-            jout.addProperty(MineUtil.para_uid, uts.getUid());
-            jout.addProperty(MineUtil.para_nickname, uts.getNickname());
-            jout.addProperty(MineUtil.para_autograph, uts.getAutograph());
+            jout.addProperty(MineUtilA.para_uid, uts.getUid());
+            jout.addProperty(MineUtilA.para_nickname, uts.getNickname());
+            jout.addProperty(MineUtilA.para_autograph, uts.getAutograph());
             jout.addProperty(WxUtil.para_r, RetNumUtil.n_0);
         }
     }

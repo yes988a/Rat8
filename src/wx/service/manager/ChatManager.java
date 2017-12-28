@@ -3,24 +3,18 @@ package wx.service.manager;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.io.FileUtils;
 import wx.common.generator.active.Chat;
 import wx.common.generator.active.ChatExample;
 import wx.common.generator.active.ChatMapper;
 import wx.common.generator.base.Computer;
-import wx.common.utils_app.ChatUtil;
-import wx.common.utils_app.FilesUtil;
-import wx.common.utils_app.FriendUtil;
-import wx.common.utils_app.MineUtil;
+import wx.common.utils_app.ChatUtilA;
+import wx.common.utils_app.FriendUtilA;
+import wx.common.utils_app.MineUtilA;
 import wx.common.utils_server.RetNumUtil;
 import wx.common.utils_server.SerUtil;
 import wx.common.utils_server.WxUtil;
 
 import javax.annotation.Resource;
-import java.io.File;
-import java.io.IOException;
-import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -36,7 +30,7 @@ public class ChatManager {
      */
     public JsonObject app_findChatsingle_http(JsonObject into) {
 
-        String uid = into.get(MineUtil.para_uid).getAsString();
+        String uid = into.get(MineUtilA.para_uid).getAsString();
 
         ChatExample exampleChat = new ChatExample();
         exampleChat.createCriteria().andUidEqualTo(uid);
@@ -46,7 +40,7 @@ public class ChatManager {
         JsonObject jout = new JsonObject();
 
         jout.addProperty(WxUtil.para_r, RetNumUtil.n_0);
-        jout.addProperty(ChatUtil.para_list_msg_json, new Gson().toJson(list));
+        jout.addProperty(ChatUtilA.para_list_msg_json, new Gson().toJson(list));
 
         return jout;
     }
@@ -58,9 +52,9 @@ public class ChatManager {
 
         JsonObject jout = new JsonObject();
 
-        if (into.has(MineUtil.para_uid) && into.has(ChatUtil.para_del_tims_json)) {
-            String uid = into.get(MineUtil.para_uid).getAsString();
-            String tims = into.get(ChatUtil.para_del_tims_json).getAsString();
+        if (into.has(MineUtilA.para_uid) && into.has(ChatUtilA.para_del_tims_json)) {
+            String uid = into.get(MineUtilA.para_uid).getAsString();
+            String tims = into.get(ChatUtilA.para_del_tims_json).getAsString();
 
             if (tims.equals("[]")) { //为null，数据错误，加入黑名单。
                 jout.addProperty(WxUtil.para_r, RetNumUtil.n_b1);
@@ -90,32 +84,32 @@ public class ChatManager {
         JsonObject jout = new JsonObject();
         jout.addProperty(WxUtil.para_r, RetNumUtil.n_b1);
 
-        String uid = into.get(MineUtil.para_uid).getAsString();
+        String uid = into.get(MineUtilA.para_uid).getAsString();
 
         //校验数据格式。长度
-        if (!into.has(ChatUtil.para_chat_des_tif)
-                || !into.has(ChatUtil.para_chat_txt)
-                || !into.has(ChatUtil.para_res)) {
+        if (!into.has(ChatUtilA.para_chat_des_tif)
+                || !into.has(ChatUtilA.para_chat_txt)
+                || !into.has(ChatUtilA.para_res)) {
             return jout;
         } else {
-            Integer des_typ = into.get(ChatUtil.para_chat_des_tif).getAsInt();
-            if (ChatUtil.testDesTyp(des_typ)) { // 不符合要求
+            Integer des_typ = into.get(ChatUtilA.para_chat_des_tif).getAsInt();
+            if (ChatUtilA.testDesTyp(des_typ)) { // 不符合要求
                 return jout;
             } else {
                 long tim_chat = WxUtil.getTim();
-                String txt = into.get(ChatUtil.para_chat_txt).getAsString();
-                String res = into.get(ChatUtil.para_res).getAsString();
+                String txt = into.get(ChatUtilA.para_chat_txt).getAsString();
+                String res = into.get(ChatUtilA.para_res).getAsString();
                 // 数据格式正确性判断。
                 Chat chat = new Chat();
                 chat.setUid(res);
                 chat.setTim(tim_chat);
-                chat.setBtyp(ChatUtil.url_app_addChatsingle);
+                chat.setBtyp(ChatUtilA.url_app_addChatsingle);
                 chat.setDtyp(des_typ);
                 chat.setReqid(uid);
                 chat.setDes(txt);
 
                 //需要快速知道，who 、where、是不是同一个，所在服务器的简单信息。。。优化
-                String cid = FriendUtil.getUsimpleCid(uid, into.get(ChatUtil.para_res).getAsString());
+                String cid = FriendUtilA.getUsimpleCid(uid, into.get(ChatUtilA.para_res).getAsString());
                 if (cid == null) {
                     //不是friend
                     jout.addProperty(WxUtil.para_r, RetNumUtil.n_b1);
@@ -134,8 +128,8 @@ public class ChatManager {
                             return jout;
                         } else {
                             JsonObject ser_single_toB = new JsonObject();
-                            ser_single_toB.addProperty(ChatUtil.para_tim_to_res_json, new Gson().toJson(chat));
-                            SerUtil.sendOne(computer, ser_single_toB, null, ChatUtil.url_ser_chat_single_fromA);
+                            ser_single_toB.addProperty(ChatUtilA.para_tim_to_res_json, new Gson().toJson(chat));
+                            SerUtil.sendOne(computer, ser_single_toB, null, ChatUtilA.url_ser_chat_single_fromA);
                             jout.addProperty(WxUtil.para_r, RetNumUtil.n_0);
                             return jout;
                         }
@@ -150,8 +144,8 @@ public class ChatManager {
      */
     public JsonObject ser_getChatFromA(JsonObject into) {
         JsonObject jout = new JsonObject();
-        if (into.has(ChatUtil.para_tim_to_res_json)) {
-            String string = into.get(ChatUtil.para_tim_to_res_json).getAsString();
+        if (into.has(ChatUtilA.para_tim_to_res_json)) {
+            String string = into.get(ChatUtilA.para_tim_to_res_json).getAsString();
             Chat chat = new Gson().fromJson(string, Chat.class);
 
             //判断，好友是否存在此服务器。?????

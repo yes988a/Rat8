@@ -1,14 +1,5 @@
 package wx.service.manager;
 
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.io.FileUtils;
-import wx.common.utils_app.ChatUtil;
-import wx.common.utils_app.FilesUtil;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Calendar;
-
 /**
  * 图片管理服务器。
  */
@@ -24,8 +15,8 @@ public class ImageManager {
 
         boolean filesucc = false;// 防止图片上传失败
 
-        if (ChatUtil.typ_des_img == des_typ) {
-            if (into.get(ChatUtil.para_f_str) == null) {
+        if (ChatUtilA.typ_des_img == des_typ) {
+            if (into.get(ChatUtilA.para_f_str) == null) {
                 filesucc = false;
             } else {
                 Calendar instance = Calendar.getInstance();
@@ -33,11 +24,11 @@ public class ImageManager {
                         + ""
                         + instance.get(Calendar.DAY_OF_YEAR);
                 String path = File.separator
-                        + FilesUtil.file_tempimg + res
+                        + FilesUtilA.file_tempimg + res
                         + File.separator + yearday
                         + File.separator + txt;
                 File file = new File(path);
-                byte[] filebyte = Base64.decodeBase64(into.get(ChatUtil.para_f_str).getAsString());
+                byte[] filebyte = Base64.decodeBase64(into.get(ChatUtilA.para_f_str).getAsString());
                 try {
                     FileUtils.writeByteArrayToFile(file,
                             filebyte);

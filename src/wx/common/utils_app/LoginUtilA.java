@@ -26,7 +26,7 @@ import wx.common.utils_server.WxUtil;
  * <p>
  * type类型区分：typ_
  */
-public class LoginUtil {
+public class LoginUtilA {
 
     //app，请求cat，获取自己的服务器
     public final static int url_app_testAcc = 9150;
@@ -58,7 +58,7 @@ public class LoginUtil {
     //获取服务器成功发回给app
     public final static void returnApp(JsonObject jout, Computer computer) {
         if (computer != null) {
-            jout.addProperty(LoginUtil.para_login_ip, computer.getIp() + ":" + computer.getPor());
+            jout.addProperty(LoginUtilA.para_login_ip, computer.getIp() + ":" + computer.getPor());
             jout.addProperty(WxUtil.para_r, RetNumUtil.n_0);
         } else {
             jout.addProperty(WxUtil.para_r, RetNumUtil.n_b1);

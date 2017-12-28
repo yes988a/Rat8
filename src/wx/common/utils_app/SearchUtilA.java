@@ -1,6 +1,6 @@
 package wx.common.utils_app;
 
-public class SearchUtil {
+public class SearchUtilA {
 
     //二维码主键，获取用户简单信息
     public final static int url_app_findUserByQr = 9152;

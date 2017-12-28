@@ -33,69 +33,69 @@ public class WxSerHandler extends AbsSerHandler {
         } else {
             JsonObject jout = null;
             switch (url) {
-                case RegisterUtil.url_app_testnum:
+                case RegisterUtilA.url_app_testnum:
                     jout = SerUtil.SPRING.getBean(RegisterManager.class).app_testnum_http(into);
                     break;
-                case RegisterUtil.url_app_complete:
+                case RegisterUtilA.url_app_complete:
                     jout = SerUtil.SPRING.getBean(RegisterManager.class).app_complete_http(into);
                     break;
-                case LoginUtil.url_app_testAcc:
+                case LoginUtilA.url_app_testAcc:
                     jout = SerUtil.SPRING.getBean(LoginManager.class).app_testAcc_http(into);
                     break;
-                case LoginUtil.url_app_LoginCompelete:
+                case LoginUtilA.url_app_LoginCompelete:
                     jout = SerUtil.SPRING.getBean(LoginManager.class).app_LoginCompelete_http(into);
                     break;
                 // --------------------     --------------         ------------          -----------
-                case MineUtil.url_app_findMysetting:
+                case MineUtilA.url_app_findMysetting:
                     jout = SerUtil.SPRING.getBean(MineManager.class).app_findMysetting_http(into);
                     break;
-                case MineUtil.url_app_updateMyNickname:
+                case MineUtilA.url_app_updateMyNickname:
                     jout = SerUtil.SPRING.getBean(MineManager.class).app_updateMyNickname_http(into);
                     break;
-                case MineUtil.url_app_updateMysound:
+                case MineUtilA.url_app_updateMysound:
                     jout = SerUtil.SPRING.getBean(MineManager.class).app_updateMysound_http(into);
                     break;
-                case MineUtil.url_app_updateMyautograph:
+                case MineUtilA.url_app_updateMyautograph:
                     jout = SerUtil.SPRING.getBean(MineManager.class).app_updateMyautograph_http(into);
                     break;
                 // --------------------         ------------          --------------         ------------          -----------
-                case SearchUtil.url_app_findUserByQr:
+                case SearchUtilA.url_app_findUserByQr:
                     jout = SerUtil.SPRING.getBean(SearchManager.class).app_findUserByQr_http(into);
                     break;
-                case SearchUtil.url_app_findUserByuu:
+                case SearchUtilA.url_app_findUserByuu:
                     jout = SerUtil.SPRING.getBean(SearchManager.class).app_findUserByuu_http(into);
                     break;
                 // --------------------         ------------          --------------         ------------          -----------
-                case FriendUtil.url_app_findUserrelation:
+                case FriendUtilA.url_app_findUserrelation:
                     jout = SerUtil.SPRING.getBean(FriendManager.class).app_findUserrelation_http(into);
                     break;
-                case FriendUtil.url_app_updateRemark:
+                case FriendUtilA.url_app_updateRemark:
                     jout = SerUtil.SPRING.getBean(FriendManager.class).app_updateRemark_http(into);
                     break;
-                case FriendUtil.url_app_updateShie:
+                case FriendUtilA.url_app_updateShie:
                     jout = SerUtil.SPRING.getBean(FriendManager.class).app_updateShie_http(into);
                     break;
-                case FriendUtil.url_app_delFriFrom:
+                case FriendUtilA.url_app_delFriFrom:
                     jout = SerUtil.SPRING.getBean(FriendManager.class).app_delFriFrom_http(into);
                     break;
-                case FriendUtil.url_app_requestFri:
+                case FriendUtilA.url_app_requestFri:
                     jout = SerUtil.SPRING.getBean(FriendManager.class).app_requestFri_http(into);
                     break;
-                case FriendUtil.url_app_agreeFri:
+                case FriendUtilA.url_app_agreeFri:
                     jout = SerUtil.SPRING.getBean(FriendManager.class).app_agreeFri_http(into);
                     break;
                 // --------------------         ------------          --------------         ------------          -----------
-                case ChatUtil.url_app_addChatsingle:
+                case ChatUtilA.url_app_addChatsingle:
                     jout = SerUtil.SPRING.getBean(ChatManager.class).app_addChatsingle_http(into);
                     break;
-                case ChatUtil.url_app_findChatsingle:
+                case ChatUtilA.url_app_findChatsingle:
                     jout = SerUtil.SPRING.getBean(ChatManager.class).app_findChatsingle_http(into);
                     break;
-                case ChatUtil.url_app_delChatsingleByTims:
+                case ChatUtilA.url_app_delChatsingleByTims:
                     jout = SerUtil.SPRING.getBean(ChatManager.class).app_delChatsingleByTims_http(into);
                     break;
                 // --------------------         ------------          --------------         ------------          -----------
-                case PhoneUtil.url_app_updateMyphone:
+                case PhoneUtilA.url_app_updateMyphone:
                     jout = SerUtil.SPRING.getBean(PhoneManager.class).app_updateMyphone_http(into);
                     break;
                 // --------------------         ------------          --------------         ------------          -----------
@@ -125,62 +125,62 @@ public class WxSerHandler extends AbsSerHandler {
             switch (url) {
 
                 // --------------------         ------------          --------------         ------------          -----------
-                case FriendUtil.url_ser_delFriToRat2:
+                case FriendUtilA.url_ser_delFriToRat2:
                     SerUtil.SPRING.getBean(FriendManager.class).ser_delFriToRat2(into);
                     break;
 // --------------------         ------------          --------------         ------------          -----------
-                case FriendUtil.url_ser_ratToFriend:
+                case FriendUtilA.url_ser_ratToFriend:
                     SerUtil.SPRING.getBean(FriendManager.class).ser_ratToFriend(into);
                     break;
 // --------------------         ------------          --------------         ------------          -----------
-                case FriendUtil.url_ser_resToreq:
+                case FriendUtilA.url_ser_resToreq:
                     SerUtil.SPRING.getBean(FriendManager.class).ser_resToreq(into);
                     break;
 
                 // --------------------         ------------          --------------         ------------          -----------
 
 /*
-                    case GroupUtil.url_ser_insertGusers:
+                    case GroupUtilA.url_ser_insertGusers:
                         SerUtil.SPRING.getBean(GroupManager.class).ser_insertGusers(into, jout);
                         break;
 
-                    case GroupUtil.url_ser_updateUserRemark:
+                    case GroupUtilA.url_ser_updateUserRemark:
                         SerUtil.SPRING.getBean(GroupManager.class).ser_updateUserRemark(into, jout);
                         break;
 
-                    case GroupUtil.url_ser_delGuserOne:
+                    case GroupUtilA.url_ser_delGuserOne:
                         SerUtil.SPRING.getBean(GroupManager.class).ser_delGuserOne(into, jout);
                         break;
 */
 
                 // --------------------         ------------          --------------         ------------          -----------
-                case ChatUtil.url_ser_chat_single_fromA:
+                case ChatUtilA.url_ser_chat_single_fromA:
                     jout = SerUtil.SPRING.getBean(ChatManager.class).ser_getChatFromA(into);
                     break;
                 // --------------------         ------------          --------------         ------------          -----------
-                case PhoneUtil.url_ser_del_phone:
+                case PhoneUtilA.url_ser_del_phone:
                     SerUtil.SPRING.getBean(PhoneManager.class).ser_del_phone(into);
                     break;
-                case PhoneUtil.url_ser_upda_phone:
+                case PhoneUtilA.url_ser_upda_phone:
                     SerUtil.SPRING.getBean(PhoneManager.class).ser_upda_phone(into);
                     break;
 
                 // --------------------         ------------          --------------         ------------          -----------
-                case TestnumUtil.url_ser_syn_testSfe:
+                case TestnumUtilA.url_ser_syn_testSfe:
                     SerUtil.SPRING.getBean(TestnumManager.class).ser_syn_testSfe(into);
                     break;
 
                 // --------------------         ------------          --------------         ------------          -----------
-                case AccountUtil.url_ser_use_acc:
+                case AccountUtilA.url_ser_use_acc:
                     jout = SerUtil.SPRING.getBean(RegisterManager.class).ser_use_acc(into);
                     break;
-                case AccountUtil.url_ser_use_acc_exist:
+                case AccountUtilA.url_ser_use_acc_exist:
                     SerUtil.SPRING.getBean(RegisterManager.class).ser_use_acc_exist(into);
                     break;
-                case RegisterUtil.url_ser_userfull_syn:
+                case RegisterUtilA.url_ser_userfull_syn:
                     SerUtil.SPRING.getBean(RegisterManager.class).ser_userfull_syn(into);
                     break;
-                case RegisterUtil.url_ser_userUni_syn:
+                case RegisterUtilA.url_ser_userUni_syn:
                     SerUtil.SPRING.getBean(RegisterManager.class).ser_userUni_syn(into);
                     break;
 
