@@ -1,16 +1,5 @@
 package wx.common.utils_app;
 
-import com.google.gson.JsonObject;
-import org.apache.commons.codec.digest.DigestUtils;
-import wx.common.generator.active.ErrNum;
-import wx.common.generator.active.ErrNumMapper;
-import wx.common.utils_server.RedisUtil;
-import wx.common.utils_server.RetNumUtil;
-import wx.common.utils_server.SerUtil;
-import wx.common.utils_server.WxUtil;
-
-import static wx.common.utils_server.RetNumUtil.num_1000;
-
 /**
  * 验证码
  */

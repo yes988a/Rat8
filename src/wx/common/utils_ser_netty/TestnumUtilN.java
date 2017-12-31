@@ -6,11 +6,11 @@ import wx.common.utils_app.PhoneUtilA;
 import wx.common.utils_app.TestnumUtilA;
 import wx.common.utils_ser_comm.TestnumUtilC;
 import wx.common.utils_server.RedisUtil;
-import wx.common.utils_server.RetNumUtil;
+import wx.common.utils_app.RetNumUtil;
 import wx.common.utils_server.SerUtil;
 import wx.common.utils_server.WxUtil;
 
-import static wx.common.utils_server.RetNumUtil.num_1000;
+import static wx.common.utils_app.RetNumUtil.num_1000;
 
 public class TestnumUtilN {
 

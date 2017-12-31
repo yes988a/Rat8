@@ -5,7 +5,7 @@ import com.google.gson.JsonObject;
 import wx.common.generator.base.UserFull;
 import wx.common.generator.base.UserFullMapper;
 import wx.common.utils_app.MineUtilA;
-import wx.common.utils_server.RetNumUtil;
+import wx.common.utils_app.RetNumUtil;
 import wx.common.utils_server.WxUtil;
 import wx.common.entity.MySimple;
 import wx.service.dao.ExtUserFullMapper;

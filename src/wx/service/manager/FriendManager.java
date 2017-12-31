@@ -9,7 +9,7 @@ import wx.common.generator.base.*;
 import wx.common.utils_app.ChatUtilA;
 import wx.common.utils_app.FriendUtilA;
 import wx.common.utils_app.MineUtilA;
-import wx.common.utils_server.RetNumUtil;
+import wx.common.utils_app.RetNumUtil;
 import wx.common.utils_server.SerUtil;
 import wx.common.utils_server.WxUtil;
 import wx.common.entity.UserrelationSimple;

@@ -2,7 +2,6 @@ package wx.common.utils_app;
 
 import com.google.gson.JsonObject;
 import wx.common.generator.base.Computer;
-import wx.common.utils_server.RetNumUtil;
 import wx.common.utils_server.WxUtil;
 
 /**

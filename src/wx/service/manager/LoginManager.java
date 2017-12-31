@@ -10,7 +10,7 @@ import wx.common.utils_app.AccountUtilA;
 import wx.common.utils_app.LoginUtilA;
 import wx.common.utils_app.MineUtilA;
 import wx.common.utils_server.AESUtil;
-import wx.common.utils_server.RetNumUtil;
+import wx.common.utils_app.RetNumUtil;
 import wx.common.utils_server.SerUtil;
 import wx.common.utils_server.WxUtil;
 import wx.service.dao.ExtUrelationMapper;

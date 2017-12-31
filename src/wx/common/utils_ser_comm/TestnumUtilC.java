@@ -4,7 +4,7 @@ import com.google.gson.JsonObject;
 import wx.common.generator.active.ErrNum;
 import wx.common.generator.active.ErrNumMapper;
 import wx.common.utils_server.RedisUtil;
-import wx.common.utils_server.RetNumUtil;
+import wx.common.utils_app.RetNumUtil;
 import wx.common.utils_server.SerUtil;
 import wx.common.utils_server.WxUtil;
 
