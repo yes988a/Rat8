@@ -25,15 +25,6 @@ public class GroupUtilA {
     //自己退出群，没有被群主删除使用此方法 (删除群某条信息)
     public final static int url_app_quitGroup = 4545;
 
-    //(新增群某条信息)
-    public final static int url_ser_insertGusers = 4634;
-
-    //修改我在群中的备注(修改更新群某条信息)
-    public final static int url_ser_updateUserRemark = 6693;
-
-    //(删除群某条信息)
-    public final static int url_ser_delGuserOne = 4172;
-
     //修改，群名称。（群主权限）（等同于发送啦一条特殊聊天记录。具体更新由定时任务来做）
     public final static int url_app_updateGname = 1282;
 
@@ -60,15 +51,6 @@ public class GroupUtilA {
 
     //群在摸个服务器的人数.
     public final static String para_cid_usernum = "U35n";
-
-    //group的cid分布（主键，gid）
-    public final static String redis_group_cid = "g1c9";
-
-    //group在当前服务器人员集合。（主键，gid）
-    public final static String redis_group_curr_uid = "gU3s7";
-
-    //20分钟
-    public final static int tim_redis_g = 1201;
 
     /**
      * 验证群名称，至少一位，最多16

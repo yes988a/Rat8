@@ -20,23 +20,15 @@ public class FriendUtilA {
     //friend 申请 return n_9本来就是好友。
     public final static int url_app_requestFri = 4675;
 
-    //申请 ，发送到不同服务器。
-    public final static int url_ser_ratToFriend = 1940;
-
     //-------------              ------------------------------              ----------               ----------
 
     //同意 添加好友 ，回复方使用
     public final static int url_app_agreeFri = 5313;
 
-    //同意 添加好友 ，回复方To请求方
-    public final static int url_ser_resToreq = 2204;
-
     //-------------              ------------------------------             ----------               ----------
 
     //删除friend
     public final static int url_app_delFriFrom = 2257;
-
-    public final static int url_ser_delFriToRat2 = 5637;
 
     //-------------              ------------------------------             ----------               ----------
 

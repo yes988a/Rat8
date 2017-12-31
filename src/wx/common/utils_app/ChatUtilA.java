@@ -57,9 +57,6 @@ public class ChatUtilA {
     // 删除已读信息。
     public final static int url_app_delChatsingleByTims = 3417;
 
-    //接受好友服务器发送过来的聊天信息
-    public final static int url_ser_chat_single_fromA = 9216;
-
     //app发送group聊天。
     public final static int url_app_chat_group = 6492;   // 接受app过来的请求。
     public final static int url_ser_chat_group_getFromReq = 5219;//接受分发。
