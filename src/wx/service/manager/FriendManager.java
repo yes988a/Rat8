@@ -10,6 +10,7 @@ import wx.common.utils_app.ChatUtilA;
 import wx.common.utils_app.FriendUtilA;
 import wx.common.utils_app.MineUtilA;
 import wx.common.utils_app.RetNumUtil;
+import wx.common.utils_ser_comm.FriendUtilC;
 import wx.common.utils_server.SerUtil;
 import wx.common.utils_server.WxUtil;
 import wx.common.entity.UserrelationSimple;
@@ -209,7 +210,7 @@ public class FriendManager {
                             return jout;
                         } else {
                             jout.addProperty(FriendUtilA.para_fri_req_json, new Gson().toJson(chat));
-                            SerUtil.sendOne(SerUtil.getComputer(resDes.getCid()), jout, SerUtil.level_0, FriendUtilA.url_ser_ratToFriend);
+                            SerUtil.sendOne(SerUtil.getComputer(resDes.getCid()), jout, SerUtil.level_0, FriendUtilC.url_ser_ratToFriend);
                             //不等待，不等待，不等待好友服务器返回信息。
                             jout.addProperty(WxUtil.para_r, RetNumUtil.n_0);
                             return jout;
@@ -353,7 +354,7 @@ public class FriendManager {
                         jout.addProperty(FriendUtilA.para_tim_succ_add, tim);
                         jout.addProperty(FriendUtilA.para_resnickname, respFull.getNickname());
                         // 通知请求者服务器。
-                        SerUtil.sendOne(SerUtil.getComputer(reqUni.getCid()), jout, SerUtil.level_0, FriendUtilA.url_ser_resToreq);
+                        SerUtil.sendOne(SerUtil.getComputer(reqUni.getCid()), jout, SerUtil.level_0, FriendUtilC.url_ser_resToreq);
 
                         jout.addProperty(WxUtil.para_r, RetNumUtil.n_0);
                         return jout;
@@ -471,7 +472,7 @@ public class FriendManager {
                     JsonObject toFri = new JsonObject();
                     toFri.addProperty(FriendUtilA.para_reqid, uid);
                     toFri.addProperty(FriendUtilA.para_resid, resid);
-                    SerUtil.sendOne(SerUtil.getComputer(urelation.getCid()), toFri, SerUtil.level_0, FriendUtilA.url_ser_delFriToRat2);
+                    SerUtil.sendOne(SerUtil.getComputer(urelation.getCid()), toFri, SerUtil.level_0, FriendUtilC.url_ser_delFriToRat2);
                     return jout;
                 }
             }

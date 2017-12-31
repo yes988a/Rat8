@@ -2,6 +2,7 @@ package wx.service.manager;
 
 import com.google.gson.JsonObject;
 import wx.common.utils_app.TestnumUtilA;
+import wx.common.utils_ser_netty.TestnumUtilN;
 
 /**
  * 验证码
@@ -14,6 +15,6 @@ public class TestnumManager {
         String phoneOrEmail = into.get(TestnumUtilA.para_ser_phone_email).getAsString();
         long tim_create = into.get(TestnumUtilA.para_tim_ser_create).getAsLong();
 
-        TestnumUtilA.updateVerificationNum(phoneOrEmail, tim_create, null);
+        TestnumUtilN.updateVerificationNum(phoneOrEmail, tim_create, null);
     }
 }

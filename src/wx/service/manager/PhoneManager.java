@@ -6,6 +6,9 @@ import wx.common.utils_app.MineUtilA;
 import wx.common.utils_app.PhoneUtilA;
 import wx.common.utils_app.TestnumUtilA;
 import wx.common.utils_app.RetNumUtil;
+import wx.common.utils_ser_comm.PhoneUtilC;
+import wx.common.utils_ser_comm.TestnumUtilC;
+import wx.common.utils_ser_netty.TestnumUtilN;
 import wx.common.utils_server.SerUtil;
 import wx.common.utils_server.WxUtil;
 
@@ -58,8 +61,8 @@ public class PhoneManager {
             } else {
                 String uuid_remove_phone = WxUtil.getU32();
                 jout.addProperty(PhoneUtilA.para_re_phone_random_uuid, uuid_remove_phone);
-                Boolean succ = TestnumUtilA.insertVerification(TestnumUtilA.redis_remove_phone_temp, phone, uuid_remove_phone);
-                TestnumUtilA.retinsertVerification(succ, jout);
+                Boolean succ = TestnumUtilN.insertVerification(TestnumUtilC.redis_remove_phone_temp, phone, uuid_remove_phone);
+                TestnumUtilC.retinsertVerification(succ, jout);
                 return jout;
             }
         } else {
@@ -86,13 +89,13 @@ public class PhoneManager {
             } else {
                 String userId = null;
                 String testnum = into.get(TestnumUtilA.para_testnum).getAsString().trim(); // 验证码
-                if (TestnumUtilA.testVerification(TestnumUtilA.redis_reg_temp, phone, testnum)) {
+                if (TestnumUtilC.testVerification(TestnumUtilC.redis_reg_temp, phone, testnum)) {
                     long tim = WxUtil.getTim();
-                    PhoneUtilA.delPhone(phone, tim);
+                    PhoneUtilC.delPhone(phone, tim);
                     JsonObject jser = new JsonObject();
                     jser.addProperty(PhoneUtilA.para_phone, phone);
-                    jser.addProperty(PhoneUtilA.para_tim_ser_del, tim);
-                    SerUtil.sendMore(null, jser, null, PhoneUtilA.url_ser_del_phone);
+                    jser.addProperty(PhoneUtilC.para_tim_ser_del, tim);
+                    SerUtil.sendMore(null, jser, null, PhoneUtilC.url_ser_del_phone);
 
                     jout.addProperty(WxUtil.para_r, RetNumUtil.n_0);
                     return jout;
@@ -122,16 +125,16 @@ public class PhoneManager {
                     return jout;
                 } else {
                     long tim = WxUtil.getTim();
-                    PhoneUtilA.delPhone(phone, tim);
+                    PhoneUtilC.delPhone(phone, tim);
                     int update = updatePhone(uid, phone, tim);
                     if (update == 1) {
                         JsonObject jup = new JsonObject();
                         jup.addProperty(PhoneUtilA.para_phone, phone);
                         jup.addProperty(MineUtilA.para_uid, uid);
-                        jup.addProperty(PhoneUtilA.para_tim_ser_update, tim);
+                        jup.addProperty(PhoneUtilC.para_tim_ser_update, tim);
 
                         //通知所有其他服务器。
-                        SerUtil.sendMore(null, jup, SerUtil.level_0, PhoneUtilA.url_ser_upda_phone);
+                        SerUtil.sendMore(null, jup, SerUtil.level_0, PhoneUtilC.url_ser_upda_phone);
 
                         return MineUtilA.retMyset(update);
                     } else {
@@ -152,12 +155,12 @@ public class PhoneManager {
      * 单独的解除手机号。功能： 注册，
      */
     public void ser_del_phone(JsonObject into) {
-        if (into.get(PhoneUtilA.para_phone) == null || into.get(PhoneUtilA.para_tim_ser_del) == null) {
+        if (into.get(PhoneUtilA.para_phone) == null || into.get(PhoneUtilC.para_tim_ser_del) == null) {
             // 日志，攻击？
         } else {
             String phone = into.get(PhoneUtilA.para_phone).getAsString().trim();
             long tim = into.get(PhoneUtilA.para_phone).getAsLong();
-            PhoneUtilA.delPhone(phone, tim);
+            PhoneUtilC.delPhone(phone, tim);
         }
     }
 
@@ -167,15 +170,15 @@ public class PhoneManager {
     public void ser_upda_phone(JsonObject into) {
         if (into.get(PhoneUtilA.para_phone) == null
                 || into.get(MineUtilA.para_uid) == null
-                || into.get(PhoneUtilA.para_tim_ser_update) == null) {
+                || into.get(PhoneUtilC.para_tim_ser_update) == null) {
 //日志。人工分析。
             //服务器间的交互，不能关闭。
         } else {
             String phone = into.get(PhoneUtilA.para_phone).getAsString();
             String uid = into.get(MineUtilA.para_uid).getAsString();
-            long tim = into.get(PhoneUtilA.para_tim_ser_update).getAsLong();
+            long tim = into.get(PhoneUtilC.para_tim_ser_update).getAsLong();
 
-            PhoneUtilA.delPhone(phone, tim);
+            PhoneUtilC.delPhone(phone, tim);
 
             //插入信息数据。。
             int up = updatePhone(uid, phone, tim);

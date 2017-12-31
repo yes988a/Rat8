@@ -11,6 +11,7 @@ import wx.common.utils_app.ChatUtilA;
 import wx.common.utils_app.FriendUtilA;
 import wx.common.utils_app.MineUtilA;
 import wx.common.utils_app.RetNumUtil;
+import wx.common.utils_ser_comm.ChatUtilC;
 import wx.common.utils_server.SerUtil;
 import wx.common.utils_server.WxUtil;
 
@@ -129,7 +130,7 @@ public class ChatManager {
                         } else {
                             JsonObject ser_single_toB = new JsonObject();
                             ser_single_toB.addProperty(ChatUtilA.para_tim_to_res_json, new Gson().toJson(chat));
-                            SerUtil.sendOne(computer, ser_single_toB, null, ChatUtilA.url_ser_chat_single_fromA);
+                            SerUtil.sendOne(computer, ser_single_toB, null, ChatUtilC.url_ser_chat_single_fromA);
                             jout.addProperty(WxUtil.para_r, RetNumUtil.n_0);
                             return jout;
                         }

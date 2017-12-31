@@ -6,6 +6,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpVersion;
 import wx.common.AbsSerHandler;
 import wx.common.utils_app.*;
+import wx.common.utils_ser_comm.*;
 import wx.common.utils_server.SerUtil;
 import wx.common.utils_server.WxUtil;
 import wx.service.manager.*;
@@ -125,15 +126,15 @@ public class WxSerHandler extends AbsSerHandler {
             switch (url) {
 
                 // --------------------         ------------          --------------         ------------          -----------
-                case FriendUtilA.url_ser_delFriToRat2:
+                case FriendUtilC.url_ser_delFriToRat2:
                     SerUtil.SPRING.getBean(FriendManager.class).ser_delFriToRat2(into);
                     break;
 // --------------------         ------------          --------------         ------------          -----------
-                case FriendUtilA.url_ser_ratToFriend:
+                case FriendUtilC.url_ser_ratToFriend:
                     SerUtil.SPRING.getBean(FriendManager.class).ser_ratToFriend(into);
                     break;
 // --------------------         ------------          --------------         ------------          -----------
-                case FriendUtilA.url_ser_resToreq:
+                case FriendUtilC.url_ser_resToreq:
                     SerUtil.SPRING.getBean(FriendManager.class).ser_resToreq(into);
                     break;
 
@@ -154,33 +155,33 @@ public class WxSerHandler extends AbsSerHandler {
 */
 
                 // --------------------         ------------          --------------         ------------          -----------
-                case ChatUtilA.url_ser_chat_single_fromA:
+                case ChatUtilC.url_ser_chat_single_fromA:
                     jout = SerUtil.SPRING.getBean(ChatManager.class).ser_getChatFromA(into);
                     break;
                 // --------------------         ------------          --------------         ------------          -----------
-                case PhoneUtilA.url_ser_del_phone:
+                case PhoneUtilC.url_ser_del_phone:
                     SerUtil.SPRING.getBean(PhoneManager.class).ser_del_phone(into);
                     break;
-                case PhoneUtilA.url_ser_upda_phone:
+                case PhoneUtilC.url_ser_upda_phone:
                     SerUtil.SPRING.getBean(PhoneManager.class).ser_upda_phone(into);
                     break;
 
                 // --------------------         ------------          --------------         ------------          -----------
-                case TestnumUtilA.url_ser_syn_testSfe:
+                case TestnumUtilC.url_ser_syn_testSfe:
                     SerUtil.SPRING.getBean(TestnumManager.class).ser_syn_testSfe(into);
                     break;
 
                 // --------------------         ------------          --------------         ------------          -----------
-                case AccountUtilA.url_ser_use_acc:
+                case AccountUtilC.url_ser_use_acc:
                     jout = SerUtil.SPRING.getBean(RegisterManager.class).ser_use_acc(into);
                     break;
-                case AccountUtilA.url_ser_use_acc_exist:
+                case AccountUtilC.url_ser_use_acc_exist:
                     SerUtil.SPRING.getBean(RegisterManager.class).ser_use_acc_exist(into);
                     break;
                 case RegisterUtilA.url_ser_userfull_syn:
                     SerUtil.SPRING.getBean(RegisterManager.class).ser_userfull_syn(into);
                     break;
-                case RegisterUtilA.url_ser_userUni_syn:
+                case RegisterUtilC.url_ser_userUni_syn:
                     SerUtil.SPRING.getBean(RegisterManager.class).ser_userUni_syn(into);
                     break;
 

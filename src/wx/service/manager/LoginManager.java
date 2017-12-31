@@ -9,6 +9,7 @@ import wx.common.generator.base.*;
 import wx.common.utils_app.AccountUtilA;
 import wx.common.utils_app.LoginUtilA;
 import wx.common.utils_app.MineUtilA;
+import wx.common.utils_ser_comm.AccountUtilC;
 import wx.common.utils_server.AESUtil;
 import wx.common.utils_app.RetNumUtil;
 import wx.common.utils_server.SerUtil;
@@ -50,7 +51,7 @@ public class LoginManager {
         JsonObject jout = new JsonObject();
 
         String acc = into.get(AccountUtilA.para_acc).getAsString().trim();
-        UserUnique unique = AccountUtilA.existAcc(acc);
+        UserUnique unique = AccountUtilC.existAcc(acc);
         if (unique == null) {
             jout.addProperty(WxUtil.para_r, RetNumUtil.n_23);//账号错误。
             return jout;

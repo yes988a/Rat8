@@ -4,6 +4,12 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import wx.common.generator.base.*;
 import wx.common.utils_app.*;
+import wx.common.utils_ser_comm.AccountUtilC;
+import wx.common.utils_ser_comm.PhoneUtilC;
+import wx.common.utils_ser_comm.RegisterUtilC;
+import wx.common.utils_ser_comm.TestnumUtilC;
+import wx.common.utils_ser_netty.RegisterUtilN;
+import wx.common.utils_ser_netty.TestnumUtilN;
 import wx.common.utils_server.RedisUtil;
 import wx.common.utils_app.RetNumUtil;
 import wx.common.utils_server.SerUtil;
@@ -79,9 +85,9 @@ public class RegisterManager {
                         return jout;
                     } else {
                         // 手机号发送，返回结果，和存储到pc端数据库，调用网络接口并且记录日志。
-                        Boolean succ = TestnumUtilA.insertVerification(TestnumUtilA.redis_reg_temp, phone, u32);
+                        Boolean succ = TestnumUtilN.insertVerification(TestnumUtilC.redis_reg_temp, phone, u32);
                         jout.addProperty(TestnumUtilA.para_testnum_random, u32);
-                        TestnumUtilA.retinsertVerification(succ, jout);
+                        TestnumUtilC.retinsertVerification(succ, jout);
                         return jout;
                     }
                 } else {
@@ -124,7 +130,7 @@ public class RegisterManager {
                 String userId = null;
                 String testnum = into.get(TestnumUtilA.para_testnum).getAsString().trim(); // 验证码
 
-                if (TestnumUtilA.testVerification(TestnumUtilA.redis_reg_temp, phone, testnum)) {
+                if (TestnumUtilC.testVerification(TestnumUtilC.redis_reg_temp, phone, testnum)) {
                     userId = WxUtil.getU32();//生成用户的随机id。
                 } else {
                     userId = null; //app请求才会发生。
@@ -150,7 +156,7 @@ public class RegisterManager {
 
                         // 注册成功.  分配computer然后返回url。
                         // 相当于提前执行登录，中，的分配服务器。
-                        Computer computer = RegisterUtilA.getLessComputer(WxUtil.getTim(), null);
+                        Computer computer = RegisterUtilN.getLessComputer(WxUtil.getTim(), null);
                         if (computer == null) {  //服务器错误。
                             return jout;
                         } else {
@@ -210,7 +216,7 @@ public class RegisterManager {
 
         JsonObject jo = new JsonObject();
         jo.addProperty(SerUtil.para_user_unique, new Gson().toJson(unique));
-        SerUtil.sendMore(null, jo, SerUtil.level_0, RegisterUtilA.url_ser_userUni_syn);
+        SerUtil.sendMore(null, jo, SerUtil.level_0, RegisterUtilC.url_ser_userUni_syn);
     }
 
     //同步uni。到全部服务器。
@@ -266,7 +272,7 @@ public class RegisterManager {
                     //纠错系统。包括验证cid在哪里。和多余的信息删除等。
                 }
             } else {
-                PhoneUtilA.delPhone(unique.getPhone(), unique.getPhoneTim());
+                PhoneUtilC.delPhone(unique.getPhone(), unique.getPhoneTim());
                 userUniqueMapper.insert(unique);
                 extComputerMapper.updateUnum(unique.getCid());
             }
@@ -292,7 +298,7 @@ public class RegisterManager {
 
             jout.addProperty(AccountUtilA.para_uuid_existAccForReg, uuid_exist);
             jout.addProperty(AccountUtilA.para_acc, acc);
-            jout.addProperty(WxUtil.para_r, AccountUtilA.url_ser_use_acc_exist);
+            jout.addProperty(WxUtil.para_r, AccountUtilC.url_ser_use_acc_exist);
             return jout;
         } else {
             RedisUtil.setR(AccountUtilA.redis_acc_tem + acc, uuid_exist, RedisUtil.tim_r_10m);
@@ -308,7 +314,7 @@ public class RegisterManager {
         String acc = into.get(AccountUtilA.para_acc).getAsString().trim();
         String uuid_exist = into.get(AccountUtilA.para_uuid_existAccForReg).getAsString().trim();
 
-        RedisUtil.delR(TestnumUtilA.redis_reg_temp + acc);
+        RedisUtil.delR(TestnumUtilC.redis_reg_temp + acc);
 
         RedisUtil.setR(AccountUtilA.redis_acc_tem + acc, uuid_exist, RedisUtil.tim_r_10m);
     }
@@ -344,7 +350,7 @@ public class RegisterManager {
                     JsonObject jo = new JsonObject();
                     jo.addProperty(AccountUtilA.para_acc, acc);  // 如果，其他服务发现注册过了，那么通知其他所有服务设置成""
                     jo.addProperty(AccountUtilA.para_uuid_existAccForReg, u32);  // 随机的一个id，用于判断操作的唯一性。
-                    SerUtil.sendMore(null, jo, null, AccountUtilA.url_ser_use_acc);
+                    SerUtil.sendMore(null, jo, null, AccountUtilC.url_ser_use_acc);
                     return false;
                 }
             } else {
