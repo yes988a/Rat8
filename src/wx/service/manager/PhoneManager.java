@@ -4,13 +4,12 @@ import com.google.gson.JsonObject;
 import wx.common.generator.base.*;
 import wx.common.utils_app.MineUtilA;
 import wx.common.utils_app.PhoneUtilA;
+import wx.common.utils_app.RetNumUtilA;
 import wx.common.utils_app.TestnumUtilA;
-import wx.common.utils_app.RetNumUtil;
-import wx.common.utils_ser_comm.PhoneUtilC;
-import wx.common.utils_ser_comm.TestnumUtilC;
+import wx.common.utils_ser_comm.*;
+import wx.common.utils_ser_netty.SerUtilN;
 import wx.common.utils_ser_netty.TestnumUtilN;
-import wx.common.utils_server.SerUtil;
-import wx.common.utils_server.WxUtil;
+
 
 import javax.annotation.Resource;
 
@@ -43,7 +42,7 @@ public class PhoneManager {
     // 解除手机绑定。暂放。app未实现
     public JsonObject app_gettestnum_rp_http(JsonObject into) {
         JsonObject jout = new JsonObject();
-        jout.addProperty(WxUtil.para_r, RetNumUtil.n_b1);
+        jout.addProperty(MineUtilA.para_r, RetNumUtilA.n_b1);
 
         String phone = into.get(PhoneUtilA.para_phone).getAsString().trim();
 
@@ -53,13 +52,13 @@ public class PhoneManager {
             uniExample.createCriteria().andPhoneEqualTo(phone);
             long count = userUniqueMapper.countByExample(uniExample);
 
-            if (count == RetNumUtil.n_0) {
+            if (count == RetNumUtilA.n_0) {
                 //不需要，做此操作？？？
                 // 此方法有个隐私隐患，如果，我随意输入一个好友的手机号发送验证码怎么办？
                 // 不应该透漏，好友信息才对。
                 return jout;
             } else {
-                String uuid_remove_phone = WxUtil.getU32();
+                String uuid_remove_phone = SerUtilC.getU32();
                 jout.addProperty(PhoneUtilA.para_re_phone_random_uuid, uuid_remove_phone);
                 Boolean succ = TestnumUtilN.insertVerification(TestnumUtilC.redis_remove_phone_temp, phone, uuid_remove_phone);
                 TestnumUtilC.retinsertVerification(succ, jout);
@@ -75,7 +74,7 @@ public class PhoneManager {
     public JsonObject app_del_phone_complete_http(JsonObject into) {
 
         JsonObject jout = new JsonObject();
-        jout.addProperty(WxUtil.para_r, RetNumUtil.n_b1);
+        jout.addProperty(MineUtilA.para_r, RetNumUtilA.n_b1);
 
         //// 缺少安全字符串验证，统一工具方法吧。
         if (into == null || into.get(PhoneUtilA.para_phone) == null || into.get(TestnumUtilA.para_testnum) == null) {
@@ -84,20 +83,20 @@ public class PhoneManager {
             String phone = into.get(PhoneUtilA.para_phone).getAsString().trim(); // 手机号
             if (!PhoneUtilA.testPhone(phone)) {
                 //攻击日志
-                jout.addProperty(WxUtil.para_r, RetNumUtil.n_7);// 手机号格式不正确
+                jout.addProperty(MineUtilA.para_r, RetNumUtilA.n_7);// 手机号格式不正确
                 return jout;
             } else {
                 String userId = null;
                 String testnum = into.get(TestnumUtilA.para_testnum).getAsString().trim(); // 验证码
                 if (TestnumUtilC.testVerification(TestnumUtilC.redis_reg_temp, phone, testnum)) {
-                    long tim = WxUtil.getTim();
+                    long tim = TimUtilC.getTimReal();
                     PhoneUtilC.delPhone(phone, tim);
                     JsonObject jser = new JsonObject();
                     jser.addProperty(PhoneUtilA.para_phone, phone);
                     jser.addProperty(PhoneUtilC.para_tim_ser_del, tim);
-                    SerUtil.sendMore(null, jser, null, PhoneUtilC.url_ser_del_phone);
+                    SerUtilN.sendMore(null, jser, null, PhoneUtilC.url_ser_del_phone);
 
-                    jout.addProperty(WxUtil.para_r, RetNumUtil.n_0);
+                    jout.addProperty(MineUtilA.para_r, RetNumUtilA.n_0);
                     return jout;
                 } else {
                     return jout;
@@ -109,7 +108,7 @@ public class PhoneManager {
     //修改phone请求。  权限验证放到上一层。（登录后使用。）
     public JsonObject app_updateMyphone_http(JsonObject into) {
         JsonObject jout = new JsonObject();
-        jout.addProperty(WxUtil.para_r, RetNumUtil.n_b1);
+        jout.addProperty(MineUtilA.para_r, RetNumUtilA.n_b1);
 
         //para_phone新手机号。
         if (into.get(PhoneUtilA.para_phone) == null || into.get(MineUtilA.para_uid) == null) {
@@ -121,10 +120,10 @@ public class PhoneManager {
                 UserFull userFull = userFullMapper.selectByPrimaryKey(uid);
                 if (userFull == null) {
                     //日志，安全。。。
-                    jout.addProperty(WxUtil.para_r, RetNumUtil.n_b1);
+                    jout.addProperty(MineUtilA.para_r, RetNumUtilA.n_b1);
                     return jout;
                 } else {
-                    long tim = WxUtil.getTim();
+                    long tim = TimUtilC.getTimReal();
                     PhoneUtilC.delPhone(phone, tim);
                     int update = updatePhone(uid, phone, tim);
                     if (update == 1) {
@@ -134,16 +133,16 @@ public class PhoneManager {
                         jup.addProperty(PhoneUtilC.para_tim_ser_update, tim);
 
                         //通知所有其他服务器。
-                        SerUtil.sendMore(null, jup, SerUtil.level_0, PhoneUtilC.url_ser_upda_phone);
+                        SerUtilN.sendMore(null, jup, SerUtilN.level_0, PhoneUtilC.url_ser_upda_phone);
 
-                        return MineUtilA.retMyset(update);
+                        return MineUtilC.retMyset(update);
                     } else {
                         //  日志，不应该出现。
                         return jout;
                     }
                 }
             } else {
-                jout.addProperty(WxUtil.para_r, RetNumUtil.n_7);
+                jout.addProperty(MineUtilA.para_r, RetNumUtilA.n_7);
                 return jout;
             }
         }

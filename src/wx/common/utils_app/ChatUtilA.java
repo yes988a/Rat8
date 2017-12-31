@@ -62,10 +62,6 @@ public class ChatUtilA {
     public final static int url_ser_chat_group_getFromReq = 5219;//接受分发。
     public final static int url_ret_chat_group = 16378;
 
-/*
-    //撤回单聊。
-    public final static int url_ret_back_singlechat = 82912;*/
-
     //判断类型是否合法
     public static boolean testDesTyp(Integer des_typ) {
         if (des_typ == null) {
@@ -78,4 +74,5 @@ public class ChatUtilA {
             }
         }
     }
+
 }

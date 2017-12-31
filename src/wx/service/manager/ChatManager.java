@@ -8,12 +8,13 @@ import wx.common.generator.active.ChatExample;
 import wx.common.generator.active.ChatMapper;
 import wx.common.generator.base.Computer;
 import wx.common.utils_app.ChatUtilA;
-import wx.common.utils_app.FriendUtilA;
 import wx.common.utils_app.MineUtilA;
-import wx.common.utils_app.RetNumUtil;
+import wx.common.utils_app.RetNumUtilA;
 import wx.common.utils_ser_comm.ChatUtilC;
-import wx.common.utils_server.SerUtil;
-import wx.common.utils_server.WxUtil;
+import wx.common.utils_ser_comm.FriendUtilC;
+import wx.common.utils_ser_comm.SerUtilC;
+import wx.common.utils_ser_comm.TimUtilC;
+import wx.common.utils_ser_netty.SerUtilN;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -40,7 +41,7 @@ public class ChatManager {
 
         JsonObject jout = new JsonObject();
 
-        jout.addProperty(WxUtil.para_r, RetNumUtil.n_0);
+        jout.addProperty(MineUtilA.para_r, RetNumUtilA.n_0);
         jout.addProperty(ChatUtilA.para_list_msg_json, new Gson().toJson(list));
 
         return jout;
@@ -58,7 +59,7 @@ public class ChatManager {
             String tims = into.get(ChatUtilA.para_del_tims_json).getAsString();
 
             if (tims.equals("[]")) { //为null，数据错误，加入黑名单。
-                jout.addProperty(WxUtil.para_r, RetNumUtil.n_b1);
+                jout.addProperty(MineUtilA.para_r, RetNumUtilA.n_b1);
             } else {
                 List<Long> timList = new Gson()
                         .fromJson(tims,
@@ -68,10 +69,10 @@ public class ChatManager {
                 ChatExample exampleChat = new ChatExample();
                 exampleChat.createCriteria().andUidEqualTo(uid).andTimIn(timList);
                 chatMapper.deleteByExample(exampleChat);
-                jout.addProperty(WxUtil.para_r, RetNumUtil.n_0);
+                jout.addProperty(MineUtilA.para_r, RetNumUtilA.n_0);
             }
         } else {
-            jout.addProperty(WxUtil.para_r, RetNumUtil.n_b1);
+            jout.addProperty(MineUtilA.para_r, RetNumUtilA.n_b1);
         }
         return jout;
     }
@@ -83,7 +84,7 @@ public class ChatManager {
      */
     public JsonObject app_addChatsingle_http(JsonObject into) {
         JsonObject jout = new JsonObject();
-        jout.addProperty(WxUtil.para_r, RetNumUtil.n_b1);
+        jout.addProperty(MineUtilA.para_r, RetNumUtilA.n_b1);
 
         String uid = into.get(MineUtilA.para_uid).getAsString();
 
@@ -97,7 +98,7 @@ public class ChatManager {
             if (ChatUtilA.testDesTyp(des_typ)) { // 不符合要求
                 return jout;
             } else {
-                long tim_chat = WxUtil.getTim();
+                long tim_chat = TimUtilC.getTimReal();
                 String txt = into.get(ChatUtilA.para_chat_txt).getAsString();
                 String res = into.get(ChatUtilA.para_res).getAsString();
                 // 数据格式正确性判断。
@@ -110,28 +111,28 @@ public class ChatManager {
                 chat.setDes(txt);
 
                 //需要快速知道，who 、where、是不是同一个，所在服务器的简单信息。。。优化
-                String cid = FriendUtilA.getUsimpleCid(uid, into.get(ChatUtilA.para_res).getAsString());
+                String cid = FriendUtilC.getUsimpleCid(uid, into.get(ChatUtilA.para_res).getAsString());
                 if (cid == null) {
                     //不是friend
-                    jout.addProperty(WxUtil.para_r, RetNumUtil.n_b1);
+                    jout.addProperty(MineUtilA.para_r, RetNumUtilA.n_b1);
                     return jout;
                 } else {
-                    if (SerUtil.curCid.equals(cid)) {
+                    if (SerUtilC.curCid.equals(cid)) {
                         chatMapper.insert(chat);
-                        jout.addProperty(WxUtil.para_r, RetNumUtil.n_0);
+                        jout.addProperty(MineUtilA.para_r, RetNumUtilA.n_0);
                         return jout;
                     } else {
                         //发送到好友服务器。
-                        Computer computer = SerUtil.getComputer(cid);
+                        Computer computer = SerUtilC.getComputer(cid);
                         if (computer == null) {
                             //日志
-                            jout.addProperty(WxUtil.para_r, RetNumUtil.n_b1);
+                            jout.addProperty(MineUtilA.para_r, RetNumUtilA.n_b1);
                             return jout;
                         } else {
                             JsonObject ser_single_toB = new JsonObject();
                             ser_single_toB.addProperty(ChatUtilA.para_tim_to_res_json, new Gson().toJson(chat));
-                            SerUtil.sendOne(computer, ser_single_toB, null, ChatUtilC.url_ser_chat_single_fromA);
-                            jout.addProperty(WxUtil.para_r, RetNumUtil.n_0);
+                            SerUtilN.sendOne(computer, ser_single_toB, null, ChatUtilC.url_ser_chat_single_fromA);
+                            jout.addProperty(MineUtilA.para_r, RetNumUtilA.n_0);
                             return jout;
                         }
                     }
@@ -152,10 +153,10 @@ public class ChatManager {
             //判断，好友是否存在此服务器。?????
 
             chatMapper.insert(chat);
-            jout.addProperty(WxUtil.para_r, RetNumUtil.n_0);
+            jout.addProperty(MineUtilA.para_r, RetNumUtilA.n_0);
             return jout;
         } else {
-            jout.addProperty(WxUtil.para_r, RetNumUtil.n_0);
+            jout.addProperty(MineUtilA.para_r, RetNumUtilA.n_0);
             return jout;
         }
     }

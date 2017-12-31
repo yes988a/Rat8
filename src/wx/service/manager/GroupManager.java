@@ -24,7 +24,7 @@ public class GroupManager {
         } else {
             List<GroupSimple> groupSimple = extGuserDao.findGroupSimples(uid);
             JsonObject jout = new JsonObject();
-            jout.addProperty(WxUtil.para_r, RetNumUtil.n_0);
+            jout.addProperty(MineUtilA.para_r, RetNumUtilA.n_0);
             jout.addProperty(WxUtil.para_json, new Gson().toJson(groupSimple));
             WxUtil.appSendMsg(uid, jout);
         }
@@ -41,10 +41,10 @@ public class GroupManager {
             long ll = guserDao.countByExample(example);
             if (ll == 0) {
                 //不是群成员，可能已经别删除，但是客户端还没有更新。n_21
-                jout.addProperty(WxUtil.para_r, RetNumUtil.n_21);
+                jout.addProperty(MineUtilA.para_r, RetNumUtilA.n_21);
             } else {
                 List<GuserSimple> list = extGuserDao.findGroupUsersSimple(jo.get(GroupUtilA.para_gid).getAsString());
-                jout.addProperty(WxUtil.para_r, RetNumUtil.n_0);
+                jout.addProperty(MineUtilA.para_r, RetNumUtilA.n_0);
                 jout.addProperty(WxUtil.para_json, new Gson().toJson(list));
             }
             WxUtil.appSendMsg(uid, jout);
@@ -66,8 +66,8 @@ public class GroupManager {
             guser.setGremark(jo.get(GroupUtilA.para_gropremark).getAsString());
             guserDao.updateByPrimaryKeySelective(guser);
             JsonObject jout = new JsonObject();
-            jout.addProperty(WxUtil.para_r, RetNumUtil.n_0);
-            jout.addProperty(WxUtil.para_url, GroupUtilA.url_app_updateGroupRemark);
+            jout.addProperty(MineUtilA.para_r, RetNumUtilA.n_0);
+            jout.addProperty(MineUtilA.para_url, GroupUtilA.url_app_updateGroupRemark);
             jout.addProperty(GroupUtilA.para_gid, gid);
             WxUtil.appSendMsg(uid, jout);
         }
@@ -87,12 +87,12 @@ public class GroupManager {
             guserDao.updateByPrimaryKeySelective(guser);
 
             //群的发送，封装。
-            jo.addProperty(WxUtil.para_url, GroupUtilA.url_ser_updateUserRemark);
-            GroupUtilA.sendMsg(gid, jo, WxUtil.getTim());
+            jo.addProperty(MineUtilA.para_url, GroupUtilA.url_ser_updateUserRemark);
+            GroupUtilA.sendMsg(gid, jo, TimUtilC.getTimReal());
 
             JsonObject jout = new JsonObject();
-            jout.addProperty(WxUtil.para_r, RetNumUtil.n_0);
-            jout.addProperty(WxUtil.para_url, GroupUtilA.url_app_updateUserRemark);
+            jout.addProperty(MineUtilA.para_r, RetNumUtilA.n_0);
+            jout.addProperty(MineUtilA.para_url, GroupUtilA.url_app_updateUserRemark);
             jout.addProperty(GroupUtilA.para_gid, gid);
             WxUtil.appSendMsg(uid, jout);
         }
@@ -109,8 +109,8 @@ public class GroupManager {
             guser.setShie(jo.get(GroupUtilA.para_groupshie).getAsInt());
             guserDao.updateByPrimaryKeySelective(guser);
             JsonObject jout = new JsonObject();
-            jout.addProperty(WxUtil.para_r, RetNumUtil.n_0);
-            jout.addProperty(WxUtil.para_url, GroupUtilA.url_app_updateShie);
+            jout.addProperty(MineUtilA.para_r, RetNumUtilA.n_0);
+            jout.addProperty(MineUtilA.para_url, GroupUtilA.url_app_updateShie);
             jout.addProperty(GroupUtilA.para_gid, gid);
             WxUtil.appSendMsg(uid, jout);
         }
@@ -123,26 +123,26 @@ public class GroupManager {
 
         //暂时缺少去重复判断。  用redis？每次sql校验？
 
-        UsimpleTostrange usStrange = extUsimpleDao.findSimpleByUid(SerUtil.curCid, uid);
+        UsimpleTostrange usStrange = extUsimpleDao.findSimpleByUid(SerUtilC.curCid, uid);
 
         if (usStrange == null) {
             //日志.
             WxUtil.appClose(uid);
         } else {
-            String gid = WxUtil.getU32();
+            String gid = SerUtilC.getU32();
 
             Guser guser = new Guser();
             guser.setGid(gid);
             guser.setUid(uid);
             guser.setUremark(usStrange.getNickname());
             guser.setGremark("");
-            guser.setShie(WxUtil.val_positive);
-            guser.setTim(WxUtil.getTim());
+            guser.setShie(MineUtilA.val_positive);
+            guser.setTim(TimUtilC.getTimReal());
             guser.setSave(0);
             guserDao.insert(guser);
 
             JsonObject jout = new JsonObject();
-            jout.addProperty(WxUtil.para_r, RetNumUtil.n_0);
+            jout.addProperty(MineUtilA.para_r, RetNumUtilA.n_0);
             jout.addProperty(GroupUtilA.para_gid, gid);
             WxUtil.appSendMsg(uid, jout);
         }
@@ -164,7 +164,7 @@ public class GroupManager {
             if (fids == null) {
                 //日志
             } else {
-                long tim = WxUtil.getTim();
+                long tim = TimUtilC.getTimReal();
                 String gid = jo.get(FriendUtilA.para_fids).getAsString();
                 //我在群中。
                 GuserKey key = new GuserKey();
@@ -173,7 +173,7 @@ public class GroupManager {
                 Guser gu = guserDao.selectByPrimaryKey(key);
                 if (gu == null) {
                     //不是群成员不能邀请其他人加入.
-                } else if (!SerUtil.curCid.equals(gu.getCid())) {
+                } else if (!SerUtilC.curCid.equals(gu.getCid())) {
 //用户信息错误，人工处理
                     System.out.println("群，用户信息错误，人工处理");
                 } else {
@@ -203,10 +203,10 @@ public class GroupManager {
                             guser.setUaccount(usimple.getAccount());
                             guser.setUremark(usimple.getNickname());
                             guser.setGremark("");
-                            guser.setShie(WxUtil.val_positive);
+                            guser.setShie(MineUtilA.val_positive);
                             guser.setGname("");
                             guser.setGotice("");
-                            guser.setTim(WxUtil.getTim());
+                            guser.setTim(TimUtilC.getTimReal());
                             guser.setSave(0);
 
                             end.add(guser);
@@ -214,7 +214,7 @@ public class GroupManager {
                         }
                     }
                     JsonObject joooo = new JsonObject();
-                    joooo.addProperty(WxUtil.para_url, GroupUtilA.url_ser_insertGusers);
+                    joooo.addProperty(MineUtilA.para_url, GroupUtilA.url_ser_insertGusers);
                     joooo.addProperty(WxUtil.para_json, new Gson().toJson(end));
 
                     allCidMore.addAll(allCid);
@@ -240,8 +240,8 @@ public class GroupManager {
 
             int del = guserDao.deleteByPrimaryKey(key);
             if (del == 1) {
-                jo.addProperty(WxUtil.para_url, GroupUtilA.url_ser_delGuserOne);
-                GroupUtilA.sendMsg(jo.get(GroupUtilA.para_gid).getAsString(), jo, WxUtil.getTim());
+                jo.addProperty(MineUtilA.para_url, GroupUtilA.url_ser_delGuserOne);
+                GroupUtilA.sendMsg(jo.get(GroupUtilA.para_gid).getAsString(), jo, TimUtilC.getTimReal());
             } else {
                 //日志
                 System.out.println("发起，，退群失败。" + uid + "" + jo.get(GroupUtilA.para_gid).getAsString() + ".....");

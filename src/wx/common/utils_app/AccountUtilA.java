@@ -13,10 +13,6 @@ public class AccountUtilA {
      */
     public final static String para_uuid_existAccForReg = "oU74L";
 
-    // acc暂时占用标识.  （怎么判断？是一次操作，如果网络断了，用uuid也不行，）
-    public final static String redis_acc_tem = "_at)";
-    //redis_acc_tem准确应该叫：被当前服务器占用。
-
     /**
      * 登录唯一标识，用户名验证
      */

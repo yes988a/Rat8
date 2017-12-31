@@ -1,9 +1,5 @@
 package wx.common.utils_app;
 
-import com.google.gson.JsonObject;
-import wx.common.generator.base.Computer;
-import wx.common.utils_server.WxUtil;
-
 /**
  * login，工具和常量。
  * <p>
@@ -54,14 +50,20 @@ public class LoginUtilA {
     //前缀：加密后的安全验证信息（用户验证是否真正的登录用户使用，，，不同的业务有不同的内容传送。）
     public final static String para_login_aes_safedes = "s_ad";
 
-    //获取服务器成功发回给app
-    public final static void returnApp(JsonObject jout, Computer computer) {
-        if (computer != null) {
-            jout.addProperty(LoginUtilA.para_login_ip, computer.getIp() + ":" + computer.getPor());
-            jout.addProperty(WxUtil.para_r, RetNumUtil.n_0);
+    public final static boolean testPass(String pass) {
+        if (pass == null || pass.length() > 32 || pass.length() < 5) {
+            return false;
         } else {
-            jout.addProperty(WxUtil.para_r, RetNumUtil.n_b1);
-            System.out.println("return App 服务器错误");
+            return true;
+        }
+    }
+
+    public final static boolean testEmail(String email) {
+        String format = "\\w{1,}[@]\\w{1,}[.]\\p{Lower}{1,}";
+        if (email.matches(format)) {
+            return true;// 邮箱名合法，返回true
+        } else {
+            return false;// 邮箱名不合法，返回false
         }
     }
 

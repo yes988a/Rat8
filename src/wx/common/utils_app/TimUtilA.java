@@ -1,5 +1,7 @@
 package wx.common.utils_app;
 
+import wx.common.utils_ser_comm.TimUtilC;
+
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -8,16 +10,7 @@ import java.util.*;
  * <p>
  * 所有时间常量和公用方法。
  */
-public class TimUtil {
-
-    /**
-     * 获取真正的时间
-     *
-     * @return
-     */
-    public static long getTimReal() {
-        return System.currentTimeMillis();
-    }
+public class TimUtilA {
 
     public static String week_one = "星期一";
     public static String week_two = "星期二";
@@ -29,10 +22,16 @@ public class TimUtil {
 
     //--------------------- 时间格式。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。
 
-    public static String formatTime(long time) {
+    /**
+     * 时间转换成星期和年月日
+     * @param time  需要转换的时间。
+     * @param sysTime 当前系统时间。
+     * @return
+     */
+    public static String formatTime(long time,long sysTime) {
 
         Calendar date = new GregorianCalendar();
-        date.setTimeInMillis(TimUtil.getTimReal());
+        date.setTimeInMillis(sysTime);
         int yearCurr = date.get(Calendar.YEAR);
         int yeardayCurr = date.get(Calendar.DAY_OF_YEAR);
 

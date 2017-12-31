@@ -13,9 +13,13 @@ import wx.common.WxSafeHandler;
 import wx.common.generator.base.Computer;
 import wx.common.generator.base.ComputerExample;
 import wx.common.generator.base.ComputerMapper;
-import wx.common.utils_app.RetNumUtil;
-import wx.common.utils_app.TimUtil;
-import wx.common.utils_server.*;
+import wx.common.utils_app.RetNumUtilA;
+import wx.common.utils_app.TimUtilA;
+import wx.common.utils_ser_comm.RedisUtilC;
+
+import wx.common.utils_ser_comm.SerUtilC;
+import wx.common.utils_ser_comm.TimUtilC;
+import wx.common.utils_ser_netty.SerUtilN;
 import wx.service.WxSerHandler;
 
 import java.net.InetSocketAddress;
@@ -28,22 +32,22 @@ public class Main {
     private static ComputerMapper computerMapper = null;
 
     public static void main(String[] args) {
-        System.out.println("...Hello WeiXiao World 启动中..." + TimUtil.formatTimeToStr(WxUtil.getTim()) + ".....................");
+        System.out.println("...Hello WeiXiao World 启动中..." + TimUtilA.formatTimeToStr(TimUtilC.getTimReal()) + ".....................");
         Main.start();
-//        System.out.println(WxUtil.getU32());
-        SerUtil.succStart = true;
+//        System.out.println(SerUtilC.getU32());
+        SerUtilC.succStart = true;
     }
 
     public static void start() {
-        SerUtil.SPRING = new ClassPathXmlApplicationContext("wx-servlet.xml");
-        computerMapper = SerUtil.SPRING.getBean(ComputerMapper.class);
-        Computer computer = computerMapper.selectByPrimaryKey(SerUtil.curCid);
+        SerUtilC.SPRING = new ClassPathXmlApplicationContext("wx-servlet.xml");
+        computerMapper = SerUtilC.SPRING.getBean(ComputerMapper.class);
+        Computer computer = computerMapper.selectByPrimaryKey(SerUtilC.curCid);
 
-        SerUtil.curBid = computer.getBid();
+        SerUtilC.curBid = computer.getBid();
         int port = computer.getPor();
 
-        Boolean red = RedisUtil.setR(Main.class.getSimpleName(),
-                "启动成功" + new Gson().toJson(computer), RedisUtil.tim_r_3d);
+        Boolean red = RedisUtilC.setR(Main.class.getSimpleName(),
+                "启动成功" + new Gson().toJson(computer), RedisUtilC.tim_r_3d);
 
         if (red) {
             System.out.println("redis 正常！！！！！！！！");
@@ -52,7 +56,7 @@ public class Main {
         workerGroup = new NioEventLoopGroup(Runtime.getRuntime().availableProcessors());
         try {
             ServerBootstrap sbs = new ServerBootstrap()
-                    .group(SerUtil.eventLoopGroup, workerGroup)
+                    .group(SerUtilN.eventLoopGroup, workerGroup)
                     .channel(NioServerSocketChannel.class)
                     .localAddress(new InetSocketAddress(port))
                     .childHandler(new ChannelInitializer<SocketChannel>() {
@@ -68,7 +72,7 @@ public class Main {
                             //如果开始不是“”将不走userEventTriggered好几次，也不做自动握手连接。（匹配使用的eques。必须完全一样且不能有后缀。）
                             //WebSocketServerProtocolHandler会拦截所有websocket的握手操作，放在此拦截器之后的handler不执行。是怎么做的呢？是不是fireXXX就会接着执行下面的操作，如果没有fireXXX不在执行下面操作。
                             //SimpleChannelInboundHandler的read0处理完以后，它后面的handler还会执行吗？不会，因为没有执行ctx.fireChannelRead(obj)
-//                            pipeline.addLast(new WebSocketServerProtocolHandler(SerUtil.ws_suffix));//   /-x 标识是ws请求，，，其他均为普通http请求。，
+//                            pipeline.addLast(new WebSocketServerProtocolHandler(SerUtilN.ws_suffix));//   /-x 标识是ws请求，，，其他均为普通http请求。，
 //                            pipeline.addLast(new WebSocketServerCompressionHandler());
                             pipeline.addLast(new IdleStateHandler(320, 180, 0, TimeUnit.SECONDS));
 
@@ -80,9 +84,9 @@ public class Main {
                     }).option(ChannelOption.SO_BACKLOG, 512).childOption(ChannelOption.SO_KEEPALIVE, true);
             // 绑定端口，开始接收进来的连接
             ChannelFuture future = sbs.bind(port).sync();
-            System.out.println("端口:--- " + port + " -----启动成功--------" + WxUtil.getTim() + "  " + TimUtil.formatTimeToStr(WxUtil.getTim()));
+            System.out.println("端口:--- " + port + " -----启动成功--------" + TimUtilC.getTimReal() + "  " + TimUtilA.formatTimeToStr(TimUtilC.getTimReal()));
 
-            computer.setStop(RetNumUtil.n_0);
+            computer.setStop(RetNumUtilA.n_0);
             computerMapper.updateByPrimaryKeySelective(computer);
 
             conns();
@@ -91,16 +95,16 @@ public class Main {
             e.printStackTrace();
             closeGroup();
         } finally {
-            if (SerUtil.eventLoopGroup != null) {
-                SerUtil.eventLoopGroup.shutdownGracefully();
+            if (SerUtilN.eventLoopGroup != null) {
+                SerUtilN.eventLoopGroup.shutdownGracefully();
                 workerGroup.shutdownGracefully();
             }
         }
     }
 
     private static void closeGroup() {
-        if (SerUtil.eventLoopGroup != null) {
-            SerUtil.eventLoopGroup.shutdownGracefully();
+        if (SerUtilN.eventLoopGroup != null) {
+            SerUtilN.eventLoopGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
         }
         System.out.println("——启动错误-----———启动错误------err----");
@@ -111,19 +115,19 @@ public class Main {
      */
     private static void conns() {
         List<Computer> list = computerMapper.selectByExample(new ComputerExample());
-        long tim = TimUtil.getTimReal();
+        long tim = TimUtilC.getTimReal();
         for (int i = 0; i < list.size(); i++) {
             /**---------    更新serList开始      ---------*/
-            SerUtil.servers.add(list.get(i).getCid());
-            SerUtil.servers.add(list.get(i).getPri());
+            SerUtilN.servers.add(list.get(i).getCid());
+            SerUtilN.servers.add(list.get(i).getPri());
             /**---------    更新serList结束      ---------*/
-            if (SerUtil.curCid.equals(list.get(i).getCid())) {
+            if (SerUtilC.curCid.equals(list.get(i).getCid())) {
 //                System.out.println("---跳过自己---服务器-" + new Gson().toJson(list.get(i)));
             } else {
-                SerUtil.connectServer(list.get(i),tim);
+                SerUtilN.connectServer(list.get(i),tim);
             }
         }
-        SerUtil.servers.add("127.0.0.1");
+        SerUtilN.servers.add("127.0.0.1");
         System.out.println("。。。。。。。。。。。。。。。。。。。完成检查连接服务器。。。。。。。。。。。。。。。。。。。。。。。。。");
     }
 }

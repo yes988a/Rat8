@@ -17,8 +17,13 @@ import io.netty.util.ReferenceCountUtil;
 import wx.common.generator.base.*;
 import wx.common.utils_app.LoginUtilA;
 import wx.common.utils_app.MineUtilA;
-import wx.common.utils_app.TimUtil;
-import wx.common.utils_server.*;
+import wx.common.utils_app.TimUtilA;
+import wx.common.utils_ser_comm.BlackUtilC;
+import wx.common.utils_ser_comm.RedisUtilC;
+import wx.common.utils_ser_comm.SerUtilC;
+import wx.common.utils_ser_comm.TimUtilC;
+import wx.common.utils_ser_netty.SerUtilN;
+
 
 import java.util.Iterator;
 import java.util.List;
@@ -79,7 +84,7 @@ public abstract class AbsSerHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object obj) throws Exception {
 
-        System.out.println("---channelReadchannel    Read------长连接个数：--------"+SerUtil.ctxSer.size());
+        System.out.println("---channelReadchannel    Read------长连接个数：--------"+ SerUtilN.ctxSer.size());
 
         if (obj instanceof TextWebSocketFrame) {
             String msg = ((TextWebSocketFrame) obj).text();
@@ -113,7 +118,7 @@ public abstract class AbsSerHandler extends ChannelInboundHandlerAdapter {
                     ctx.close();
                     return;
                 } else {
-                    if (parameters.containsKey(SerUtil.ht_suffix)) {  //http
+                    if (parameters.containsKey(SerUtilN.ht_suffix)) {  //http
                         if (inner) {//-----------------------------------------      内部连接 http   start    ================================================================-------------------------------
                             ctx.close();
                             return;
@@ -121,8 +126,8 @@ public abstract class AbsSerHandler extends ChannelInboundHandlerAdapter {
                         } else {
                             //-----------------------------------------      app连接 http     start   ================================================================----------------------------------------------
                             try {
-                                into = new JsonParser().parse(parameters.get(SerUtil.ht_suffix).get(0)).getAsJsonObject();
-                                into.remove(RedisUtil.para_login_uid);//安全，防止用户自己写入
+                                into = new JsonParser().parse(parameters.get(SerUtilN.ht_suffix).get(0)).getAsJsonObject();
+                                into.remove(RedisUtilC.para_login_uid);//安全，防止用户自己写入
                             } catch (Exception e) {
                             }
                             if (into == null) {
@@ -141,9 +146,9 @@ public abstract class AbsSerHandler extends ChannelInboundHandlerAdapter {
 
                                     LoginExample exampleLogin = new LoginExample();
                                     exampleLogin.createCriteria().andTidEqualTo(tid);
-                                    List<Login> lll = SerUtil.SPRING.getBean(LoginMapper.class).selectByExample(exampleLogin);
+                                    List<Login> lll = SerUtilC.SPRING.getBean(LoginMapper.class).selectByExample(exampleLogin);
                                     if (lll.size() == 1) {
-                                        into.addProperty(RedisUtil.para_login_uid, lll.get(0).getUid());
+                                        into.addProperty(RedisUtilC.para_login_uid, lll.get(0).getUid());
                                         userHttp(ctx, httpVersion, into);
                                     } else {
                                         // 参数不正确，安全日志。
@@ -158,12 +163,12 @@ public abstract class AbsSerHandler extends ChannelInboundHandlerAdapter {
                         }
                         //-----------------------------------------      app连接 http   end     ================================================================-------------------------------------------------
 
-                    } else if (parameters.containsKey(SerUtil.ws_suffix)) {  //ws握手
+                    } else if (parameters.containsKey(SerUtilN.ws_suffix)) {  //ws握手
 
                         //-----------------------------------------      握手   构造参数     ================================================================-------------------------------------------------
                         try {
-                            into = new JsonParser().parse(parameters.get(SerUtil.ws_suffix).get(0)).getAsJsonObject();
-                            into.remove(RedisUtil.para_login_uid);//安全，防止用户自己写入
+                            into = new JsonParser().parse(parameters.get(SerUtilN.ws_suffix).get(0)).getAsJsonObject();
+                            into.remove(RedisUtilC.para_login_uid);//安全，防止用户自己写入
                         } catch (Exception e) {
                         }
 
@@ -176,27 +181,27 @@ public abstract class AbsSerHandler extends ChannelInboundHandlerAdapter {
                             //暂放
                             if (inner) {// 服务器间安全验证。
                                 //-----------------------------------------      握手    安全验证   内部握手  start     ================================================================-------------------------------------------------
-                                if (into == null || !into.has(WxUtil.para_cid)) {
+                                if (into == null || !into.has(SerUtilC.para_cid)) {
                                     ctx.close();
                                     return;
                                 } else {
                                     //判断cid和address是否吻合。
-                                    if (SerUtil.servers.contains(into.get(WxUtil.para_cid).getAsString())
-                                            && SerUtil.servers.contains(ctx.channel().remoteAddress().toString().split(":")[0].substring(1))) {
+                                    if (SerUtilN.servers.contains(into.get(SerUtilC.para_cid).getAsString())
+                                            && SerUtilN.servers.contains(ctx.channel().remoteAddress().toString().split(":")[0].substring(1))) {
 
-                                        uuid = into.get(WxUtil.para_cid).getAsString();//第一次时，是cid
-                                        ComputerMapper cd = SerUtil.SPRING.getBean(ComputerMapper.class);
+                                        uuid = into.get(SerUtilC.para_cid).getAsString();//第一次时，是cid
+                                        ComputerMapper cd = SerUtilC.SPRING.getBean(ComputerMapper.class);
                                         Computer comp = cd.selectByPrimaryKey(uuid);
                                         if (comp == null) {
                                             ctx.close();
                                             return;
                                         } else {
-                                            SerUtil.connectServer(comp, null);
+                                            SerUtilN.connectServer(comp, null);
                                             boolean bwos = woshou(ctx, fullhttp);
                                             if (bwos) {
-                                                System.out.println("---被连接---成功。。：：：内部：：：" + uuid + "  tim:  " + TimUtil.formatTimeToStr(WxUtil.getTim()));
+                                                System.out.println("---被连接---成功。。：：：内部：：：" + uuid + "  tim:  " + TimUtilA.formatTimeToStr(TimUtilC.getTimReal()));
                                             } else {
-                                                System.out.println("---被连接---失败。。：：：内部：：：" + uuid + "  tim:  " + TimUtil.formatTimeToStr(WxUtil.getTim()));
+                                                System.out.println("---被连接---失败。。：：：内部：：：" + uuid + "  tim:  " + TimUtilA.formatTimeToStr(TimUtilC.getTimReal()));
                                             }
                                             //服务器连接成功，其他返回参数。
                                         }
@@ -246,10 +251,10 @@ public abstract class AbsSerHandler extends ChannelInboundHandlerAdapter {
                     .newHandshaker(fullhttp).handshake(ctx.channel(), fullhttp);
             //ws握手成功，不需要做任何操作。
             //这里应该也发送不出去。未验证。ctx.writeAndFlush(new TextWebSocketFrame(jout.toString()));
-            SerUtil.ctxSer.put(uuid, ctx);
+            SerUtilN.ctxSer.put(uuid, ctx);
             return true;
         } catch (Exception e) {
-            SerUtil.ctxSer.remove(uuid, ctx);
+            SerUtilN.ctxSer.remove(uuid, ctx);
             ctx.close();
         } finally {
             fullhttp.release();
@@ -260,12 +265,12 @@ public abstract class AbsSerHandler extends ChannelInboundHandlerAdapter {
     //  text.....websocket
     private void text_ChannelRead(ChannelHandlerContext ctx, String msg) {
         if (inner) {//内部，    全部是websocket的请求。没有普通的http。
-            if (SerUtil.send_heart.equals(msg)) {
+            if (SerUtilN.send_heart.equals(msg)) {
                 //不应该，收到验证心跳的请求。
                 //日志
                 ctx.close();
                 return;
-            } else if (SerUtil.res_heart.equals(msg)) {
+            } else if (SerUtilN.res_heart.equals(msg)) {
                 //客户端返回心跳回应。
                 return;
             } else {
@@ -273,13 +278,13 @@ public abstract class AbsSerHandler extends ChannelInboundHandlerAdapter {
                 return;
             }
         } else { //用户
-            if (SerUtil.send_heart.equals(msg) || "@heart".equals(msg)) {
-//                    ctx.writeAndFlush(new TextWebSocketFrame(SerUtil.res_heart));
+            if (SerUtilN.send_heart.equals(msg) || "@heart".equals(msg)) {
+//                    ctx.writeAndFlush(new TextWebSocketFrame(SerUtilN.res_heart));
                 //服务器才可以发送心跳请求，客户端只能回应。
                 //服务器对收到的心跳请求做关闭操作。对收到的回复心跳操作不做任何操作。
 //                    ctx.close();  由于浏览器测试，暂时放开关闭操作。
                 return;
-            } else if (SerUtil.res_heart.equals(msg)) {
+            } else if (SerUtilN.res_heart.equals(msg)) {
                 //客户端返回心跳回应。
                 return;
             } else {
@@ -299,7 +304,7 @@ public abstract class AbsSerHandler extends ChannelInboundHandlerAdapter {
         if (evt instanceof IdleStateEvent) {
             IdleState state = ((IdleStateEvent) evt).state();
             if (state == IdleState.WRITER_IDLE) {
-                ctx.writeAndFlush(new TextWebSocketFrame(SerUtil.send_heart));
+                ctx.writeAndFlush(new TextWebSocketFrame(SerUtilN.send_heart));
             } else if (state == IdleState.READER_IDLE) {
 //测试，暂时注销，应该关闭连接，具体时间，次数等，待优化。         ctx.close();
                 //日志，网络不好？
@@ -317,7 +322,7 @@ public abstract class AbsSerHandler extends ChannelInboundHandlerAdapter {
     public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
         super.channelRegistered(ctx);
 
-        Boolean bb = BlackUtil.safe(ctx.channel().remoteAddress().toString().split(":")[0].substring(1), 0);
+        Boolean bb = BlackUtilC.safe(ctx.channel().remoteAddress().toString().split(":")[0].substring(1), 0);
         if (bb == null) {
             ctx.close();
         } else if (bb) {
@@ -328,27 +333,27 @@ public abstract class AbsSerHandler extends ChannelInboundHandlerAdapter {
             inner = false;
         }
 
-        System.out.println("---------长数连接------channelRegistered--"+SerUtil.ctxSer.size());
+        System.out.println("---------长数连接------channelRegistered--"+SerUtilN.ctxSer.size());
     }
 
     @Override
     public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
         //  这些地方有待优化，现在都是瞎写的，没考虑是否要进行其他handler中的方法。
-        if (uuid != null && ctx == SerUtil.ctxSer.remove(uuid)) {
-            System.out.println("---111--channelUnregistered----长连接个数：--------"+SerUtil.ctxSer.size());
+        if (uuid != null && ctx == SerUtilN.ctxSer.remove(uuid)) {
+            System.out.println("---111--channelUnregistered----长连接个数：--------"+SerUtilN.ctxSer.size());
             super.channelUnregistered(ctx);
         } else {
-            if (SerUtil.ctxSer.containsValue(ctx)) {
-                Iterator<String> it = SerUtil.ctxSer.keySet().iterator();
+            if (SerUtilN.ctxSer.containsValue(ctx)) {
+                Iterator<String> it = SerUtilN.ctxSer.keySet().iterator();
                 while (it.hasNext()) {
                     String ne = it.next();
-                    if (SerUtil.ctxSer.get(ne) == ctx) {
-                        SerUtil.ctxSer.remove(ne);
+                    if (SerUtilN.ctxSer.get(ne) == ctx) {
+                        SerUtilN.ctxSer.remove(ne);
                         break;
                     }
                 }
             }
-            System.out.println("---222--channelUnregistered----长连接个数：--------"+SerUtil.ctxSer.size());
+            System.out.println("---222--channelUnregistered----长连接个数：--------"+SerUtilN.ctxSer.size());
             super.channelUnregistered(ctx);
         }
     }

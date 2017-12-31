@@ -1,4 +1,4 @@
-package wx.common.utils_server;
+package wx.common.utils_ser_comm;
 
 import net.sourceforge.pinyin4j.PinyinHelper;
 import net.sourceforge.pinyin4j.format.HanyuPinyinCaseType;
@@ -11,7 +11,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
-public class Pinyin4jUtil {
+public class Pinyin4jUtilC {
 
     /**
      * 获取中文转英文

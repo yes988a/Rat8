@@ -1,4 +1,4 @@
-package wx.common.utils_server;
+package wx.common.utils_ser_comm;
 
 import org.apache.commons.codec.binary.Base64;
 
@@ -11,7 +11,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
 // 仅仅测试使用。。。。。 其他类里面已经包含。
-public class AESUtil {
+public class AesUtilC {
 
     public static String key = "WZOoXwGv4OvxkeRu5op9sQ==";
 

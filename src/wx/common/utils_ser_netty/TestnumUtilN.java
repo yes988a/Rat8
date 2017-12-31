@@ -2,15 +2,16 @@ package wx.common.utils_ser_netty;
 
 import com.google.gson.JsonObject;
 import org.apache.commons.codec.digest.DigestUtils;
+import wx.common.utils_app.LoginUtilA;
 import wx.common.utils_app.PhoneUtilA;
-import wx.common.utils_app.TestnumUtilA;
+import wx.common.utils_app.RetNumUtilA;
+import wx.common.utils_ser_comm.SerUtilC;
 import wx.common.utils_ser_comm.TestnumUtilC;
-import wx.common.utils_server.RedisUtil;
-import wx.common.utils_app.RetNumUtil;
-import wx.common.utils_server.SerUtil;
-import wx.common.utils_server.WxUtil;
+import wx.common.utils_ser_comm.RedisUtilC;
+import wx.common.utils_ser_comm.TimUtilC;
 
-import static wx.common.utils_app.RetNumUtil.num_1000;
+
+import static wx.common.utils_app.RetNumUtilA.num_1000;
 
 public class TestnumUtilN {
 
@@ -25,14 +26,14 @@ public class TestnumUtilN {
     public final synchronized static Boolean insertVerification(String url_redis, String phoneOrEmail, String uuid_remove_phone) {
         Integer num = 0;
         try {
-            String numTim = RedisUtil.getR(TestnumUtilC.redis_test_num + phoneOrEmail, null);
+            String numTim = RedisUtilC.getR(TestnumUtilC.redis_test_num + phoneOrEmail, null);
             num = Integer.valueOf(numTim.substring(numTim.lastIndexOf("&")));
         } catch (Exception e) {
         }
 
-        long tim_create = WxUtil.getTim();
+        long tim_create = TimUtilC.getTimReal();
 
-        if (num != null && num > RetNumUtil.n_3) {
+        if (num != null && num > RetNumUtilA.n_3) {
             return null;
             //全服务器通知，手机，次数过多，如果，其他服务也很多次，拉入黑名单。
         } else {
@@ -41,25 +42,25 @@ public class TestnumUtilN {
 
                 String[] labc = {"W", "E", "R", "Y", "U", "P", "A", "S",
                         "D", "F", "G", "H", "K", "Z", "X", "V", "B", "N", "M"};
-                String testnum = labc[WxUtil.getRandomId(labc.length)] + WxUtil.getRandomId(num_1000);
+                String testnum = labc[SerUtilC.getRandomId(labc.length)] + SerUtilC.getRandomId(num_1000);
                 boolean sendSucc = true;//sample(phone, numTest);
 
                 testnum = "12345";
                 //testnum = DigestUtils.md5Hex(testnum);
 
                 if (sendSucc) { //发送成功。
-                    RedisUtil.setR(url_redis + phoneOrEmail,
-                            DigestUtils.md5Hex(uuid_remove_phone + testnum), RedisUtil.tim_r_15m);
+                    RedisUtilC.setR(url_redis + phoneOrEmail,
+                            DigestUtils.md5Hex(uuid_remove_phone + testnum), RedisUtilC.tim_r_15m);
                     updateVerificationNum(phoneOrEmail, tim_create, num);
                     JsonObject jser = new JsonObject();
-                    jser.addProperty(TestnumUtilA.para_tim_ser_create, tim_create);
-                    jser.addProperty(TestnumUtilA.para_ser_phone_email, phoneOrEmail);//其实是，phoneOrEmail
-                    SerUtil.sendMore(null, jser, null, TestnumUtilC.url_ser_syn_testSfe);
+                    jser.addProperty(TestnumUtilC.para_tim_ser_create, tim_create);
+                    jser.addProperty(TestnumUtilC.para_ser_phone_email, phoneOrEmail);//其实是，phoneOrEmail
+                    SerUtilN.sendMore(null, jser, null, TestnumUtilC.url_ser_syn_testSfe);
                     return true;
                 } else {
                     return false;
                 }
-            } else if (WxUtil.testEmail(phoneOrEmail)) {
+            } else if (LoginUtilA.testEmail(phoneOrEmail)) {
                 return true;
             } else {
                 return false;
@@ -70,12 +71,12 @@ public class TestnumUtilN {
 
     //更新发送验证码的次数，（安全验证使用。）各个服务器间要同是更新。。
     public final static void updateVerificationNum(String phoneOrEmail, long tim_create, Integer num) {
-        String numTim = RedisUtil.getR(TestnumUtilC.redis_test_num + phoneOrEmail, null);
-        if (RedisUtil.val_error.equals(numTim)) {
+        String numTim = RedisUtilC.getR(TestnumUtilC.redis_test_num + phoneOrEmail, null);
+        if (RedisUtilC.val_error.equals(numTim)) {
 
         } else if (numTim == null) {
-            RedisUtil.setR(TestnumUtilC.redis_test_num + phoneOrEmail,
-                    1 + "&" + tim_create, RedisUtil.tim_r_15m);
+            RedisUtilC.setR(TestnumUtilC.redis_test_num + phoneOrEmail,
+                    1 + "&" + tim_create, RedisUtilC.tim_r_15m);
             TestnumUtilC.inner_update_sql(phoneOrEmail, tim_create);
         } else if (!numTim.startsWith(tim_create + "")) {
             if (num == null) {
@@ -85,8 +86,8 @@ public class TestnumUtilN {
                 } catch (Exception e) {
                 }
             }
-            RedisUtil.setR(TestnumUtilC.redis_test_num + phoneOrEmail,
-                    (num + 1) + "&" + tim_create, RedisUtil.tim_r_15m);
+            RedisUtilC.setR(TestnumUtilC.redis_test_num + phoneOrEmail,
+                    (num + 1) + "&" + tim_create, RedisUtilC.tim_r_15m);
             TestnumUtilC.inner_update_sql(phoneOrEmail, tim_create);
         }
     }

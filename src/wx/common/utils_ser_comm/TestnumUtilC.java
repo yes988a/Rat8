@@ -3,10 +3,8 @@ package wx.common.utils_ser_comm;
 import com.google.gson.JsonObject;
 import wx.common.generator.active.ErrNum;
 import wx.common.generator.active.ErrNumMapper;
-import wx.common.utils_server.RedisUtil;
-import wx.common.utils_app.RetNumUtil;
-import wx.common.utils_server.SerUtil;
-import wx.common.utils_server.WxUtil;
+import wx.common.utils_app.MineUtilA;
+import wx.common.utils_app.RetNumUtilA;
 
 public class TestnumUtilC {
 
@@ -14,7 +12,14 @@ public class TestnumUtilC {
     //同步验证码发送次数到其他服务器。
     public final static int url_ser_syn_testSfe = 9412;
 
+    /**
+     * 服务器间传送的主键。手机号？邮箱？等。
+     */
+    public final static String para_ser_phone_email = "U295E";
 
+    /**
+     * 验证码创建时间。。
+     */
     /**
      * 手机验证码次数限定，（主键：手机号）
      * <p>
@@ -26,6 +31,11 @@ public class TestnumUtilC {
     public final static String redis_remove_phone_temp = "w*j";//移除手机号账号关联，临时存储。
 
     /**
+     * 验证码创建时间。。
+     */
+    public final static String para_tim_ser_create = "C5st";
+
+    /**
      * 验证二维码是否正确，如果正确(删除，表示已经使用过。)
      *
      * @param url_redis    使用范围。:如：redis_reg_temp
@@ -35,8 +45,8 @@ public class TestnumUtilC {
     public final static boolean testVerification(String url_redis, String phoneOrEmail, String uuidNumMd5) {
         if (uuidNumMd5 == null || uuidNumMd5.length() < 6) {
             return false;
-        } else if (uuidNumMd5.equals(RedisUtil.getR(url_redis + phoneOrEmail, null))) {//格式：DigestUtils.md5Hex(uuid + testnum)
-            RedisUtil.delR(url_redis + phoneOrEmail);
+        } else if (uuidNumMd5.equals(RedisUtilC.getR(url_redis + phoneOrEmail, null))) {//格式：DigestUtils.md5Hex(uuid + testnum)
+            RedisUtilC.delR(url_redis + phoneOrEmail);
             return true;
         } else {
             return false;
@@ -53,7 +63,7 @@ public class TestnumUtilC {
 
         //用什么方法快速获取呢？sql库怎么不受攻击。
         //一天内不能超过的次数。一天黑名单，
-        ErrNumMapper mapper = SerUtil.SPRING.getBean(ErrNumMapper.class);
+        ErrNumMapper mapper = SerUtilC.SPRING.getBean(ErrNumMapper.class);
         ErrNum errNum = mapper.selectByPrimaryKey(phoneOrEmail);
         if (errNum == null) {
             errNum = new ErrNum();
@@ -75,11 +85,11 @@ public class TestnumUtilC {
     //配合insertVerification使用，处理insertVerification的结果为json
     public final static void retinsertVerification(Boolean succ, JsonObject jout) {
         if (succ == null) {
-            jout.addProperty(WxUtil.para_r, RetNumUtil.n_17);
+            jout.addProperty(MineUtilA.para_r, RetNumUtilA.n_17);
         } else if (succ) {
-            jout.addProperty(WxUtil.para_r, RetNumUtil.n_0);
+            jout.addProperty(MineUtilA.para_r, RetNumUtilA.n_0);
         } else {
-            jout.addProperty(WxUtil.para_r, RetNumUtil.n_27);
+            jout.addProperty(MineUtilA.para_r, RetNumUtilA.n_27);
         }
     }
 

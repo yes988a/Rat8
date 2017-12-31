@@ -1,12 +1,5 @@
 package wx.common.utils_app;
 
-import wx.common.generator.base.UserUnique;
-import wx.common.generator.base.UserUniqueExample;
-import wx.common.generator.base.UserUniqueMapper;
-import wx.common.utils_server.SerUtil;
-
-import java.util.List;
-
 public class PhoneUtilA {
 
     //（登录后的用户修改自己的手机号）修改，电话。。。。。可能以后要单独放服务器。如放到cat。
@@ -16,7 +9,7 @@ public class PhoneUtilA {
     public final static int url_app_gettestnum_rp = 3547;
 
     /**
-     * 是否已经阅读同意废弃其他手机号绑定。  值：WxUtil.para_yes + phone。代表已经知道要解绑的手机号。
+     * 是否已经阅读同意废弃其他手机号绑定。  值：MineUtilA.para_yes + phone。代表已经知道要解绑的手机号。
      */
     public final static String para_know_del_phone = "W4d";
 

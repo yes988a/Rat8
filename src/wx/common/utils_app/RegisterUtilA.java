@@ -1,13 +1,5 @@
 package wx.common.utils_app;
 
-import wx.common.generator.base.*;
-import wx.common.utils_server.RedisUtil;
-import wx.common.utils_server.SerUtil;
-import wx.service.dao.ExtComputerMapper;
-
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * 各参数前加固定前缀。
  * <p>
@@ -34,8 +26,5 @@ public class RegisterUtilA {
 
     //register 完成
     public final static int url_app_complete = 7844;
-
-    //把userFull同步到所在服务器。（必然同时插入userunique）
-    public final static int url_ser_userfull_syn = 92402;
 
 }

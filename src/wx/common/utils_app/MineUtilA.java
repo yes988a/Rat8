@@ -1,8 +1,5 @@
 package wx.common.utils_app;
 
-import com.google.gson.JsonObject;
-import wx.common.utils_server.WxUtil;
-
 /**
  * rat有app发送请求等。端应该有相应的所有ser更新。
  */
@@ -48,6 +45,51 @@ public class MineUtilA {
     public final static String para_m_simple_json = "usR1D";
 
     /**
+     * 积极地，喜欢的）
+     * 添加好友:同意
+     * 消息通知:不屏蔽消息，不免打扰。控件关闭
+     * 我的手机号：有效
+     * 接受图片:是
+     * 我的设置，声音通知
+     */
+    public final static int val_positive = 20;
+
+    /**
+     * 消极的，厌倦的）
+     * 添加好友:拒绝
+     * 消息通知:屏蔽消息，免打扰。控件打开
+     * 我的手机号：失效
+     * 接受图片:否
+     * 我的设置，取消声音通知
+     */
+    public final static int val_nagative = 21;
+
+    /**
+     * 是的
+     */
+    public final static String para_yes = "y";
+
+    /**
+     * 否定
+     */
+    public final static String para_no = "n";
+
+    /**
+     * 访问状态，0成功，1token过期
+     */
+    public final static String para_r = "r";
+
+    /**
+     * 具体url地址
+     */
+    public final static String para_url = "u1r";
+
+    /**
+     * 二维码
+     */
+    public final static String para_qrcode = "qr3c";
+
+    /**
      * 验证我的昵称，至少一位，最多18
      */
     public final static boolean testUserNickname(String name) {
@@ -63,21 +105,4 @@ public class MineUtilA {
         }
     }
 
-    /**
-     * 统一定义返回信息
-     * <p>
-     * 修改我的设置的时候。
-     *
-     * @param update
-     */
-    public final static JsonObject retMyset(int update) {
-        JsonObject jout = new JsonObject();
-        if (update == 1) {
-            jout.addProperty(WxUtil.para_r, RetNumUtil.n_0);
-            return jout;
-        } else {
-            jout.addProperty(WxUtil.para_r, RetNumUtil.n_b1);
-            return jout;
-        }
-    }
 }

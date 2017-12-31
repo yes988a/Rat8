@@ -1,8 +1,8 @@
-package wx.common.utils_app;
+package wx.common.utils_ser_comm;
 
 import java.io.File;
 
-public class FilesUtilA {
+public class FilesUtilC {
 
     /**
      * 临时图片,聊天图片

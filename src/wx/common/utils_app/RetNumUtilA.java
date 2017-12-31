@@ -3,7 +3,7 @@ package wx.common.utils_app;
 /**
  * 返回para_r的值定义。
  */
-public class RetNumUtil {
+public class RetNumUtilA {
 
     /**
      * 失败，无通知消息，访问错误(包括访问超时，参数错误等一切没办法返给用户的提示)

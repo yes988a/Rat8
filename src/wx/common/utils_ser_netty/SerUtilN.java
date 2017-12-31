@@ -1,32 +1,36 @@
-package wx.common.utils_server;
+package wx.common.utils_ser_netty;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.sun.istack.internal.NotNull;
 import io.netty.bootstrap.Bootstrap;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.http.DefaultHttpHeaders;
-import io.netty.handler.codec.http.HttpClientCodec;
-import io.netty.handler.codec.http.HttpObjectAggregator;
+import io.netty.handler.codec.http.*;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketClientHandshakerFactory;
 import io.netty.handler.codec.http.websocketx.WebSocketClientProtocolHandler;
 import io.netty.handler.codec.http.websocketx.WebSocketVersion;
 import io.netty.handler.stream.ChunkedWriteHandler;
-import org.springframework.context.ApplicationContext;
 import wx.common.WxCliHandler;
 import wx.common.generator.active.StorageTask;
 import wx.common.generator.active.StorageTaskMapper;
 import wx.common.generator.base.Computer;
 import wx.common.generator.base.ComputerExample;
 import wx.common.generator.base.ComputerMapper;
-import wx.common.utils_app.RetNumUtil;
-import wx.common.utils_app.TimUtil;
+import wx.common.utils_app.MineUtilA;
+import wx.common.utils_app.RetNumUtilA;
+import wx.common.utils_app.TimUtilA;
+import wx.common.utils_ser_comm.MineUtilC;
+import wx.common.utils_ser_comm.RedisUtilC;
+import wx.common.utils_ser_comm.SerUtilC;
+import wx.common.utils_ser_comm.TimUtilC;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.HashSet;
 import java.util.List;
@@ -34,24 +38,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * 服务器间的通讯
- */
-public class SerUtil {
-
-    //是否成功启动，（如果true才执行定时任务里面的东西.）
-    public static boolean succStart = false;
-
-    /**
-     * 每个computer的唯一标示，不可重复
-     */
-    public final static String curCid = "aaa8315999fe403d806d7d33adadwu6q";
-    public static String curBid = ""; //数据库组。 根据curCid来自数据库。
-
-    /**
-     * spring上下文。
-     */
-    public static ApplicationContext SPRING = null;
+public class SerUtilN {
 
     //作为服务器 （应该有前缀，否则，app随机一个真实用户uid，用户会下线。攻击）
     public final static Map<String, ChannelHandlerContext> ctxSer = new ConcurrentHashMap<String, ChannelHandlerContext>();
@@ -93,70 +80,8 @@ public class SerUtil {
     // ser之间传递，需要的时间标识。
     public final static String para_storage_tim = "t2nke";
 
-    //同步时使用，json的string
-    public final static String para_user_full = "u2f";
-
-    //同步时使用，json的string
-    public final static String para_user_unique = "u8e";
-
     //删除StorageTask，统一，需要UUID即可。
     public final static int url_ser_del_storage = 8531;
-
-    /**
-     * 服务器详情List（主键：无）
-     * <p>
-     * 包括自己
-     * <p>
-     * 在服务器期限内，并且正常使用中。
-     * <p>
-     * 不在使用范围中的服务器，初次使用时，有好多信息就没办法收到，请在正常使用后，找时间点统计重要数据。
-     * （错误服务：包括不在使用范围，和，自己挂啦的。）
-     * <p>
-     * <p>
-     * CidRedis
-     * <p>
-     */
-    public final static String redis_computer_list = "MliS" + curCid;
-
-    /**
-     * 服务器详情（主键：cid）
-     * <p>
-     * 忽略是否正常使用信息。
-     * <p>
-     * Computer
-     * <p>
-     */
-    public final static String redis_computer = "m0C";
-
-    /**
-     * 数据库中获取computer。不判断是否可用。
-     *
-     * @param cid
-     * @return
-     */
-    public final static Computer getComputer(String cid) {
-        if (cid == null || RedisUtil.val_error.equals(cid)) {
-            return null;
-        } else {
-            Computer co = null;
-            try {
-                co = new Gson().fromJson(RedisUtil.getR(redis_computer + cid, null), Computer.class);
-            } catch (Exception e) {
-            }
-            if (co == null) {
-                co = SerUtil.SPRING.getBean(ComputerMapper.class).selectByPrimaryKey(cid);
-                if (co == null) {
-                    //日志
-                    return null;
-                } else {
-                    RedisUtil.setR(redis_computer + cid, new Gson().toJson(co), RedisUtil.tim_r_90d);
-                    return co;
-                }
-            } else {
-                return co;
-            }
-        }
-    }
 
     /**
      * 发送给其它rat服务器（当选择群发时，没有返回结果是必然的。）
@@ -166,26 +91,26 @@ public class SerUtil {
      * @param cs 如果cids为null则发送给所有
      */
     public final static void sendMore(List<Computer> cs, @NotNull JsonObject jo, Integer level, int url) {
-        long sys_time = WxUtil.getTim();
+        long sys_time = TimUtilC.getTimReal();
         if (cs == null || cs.size() == 0) {
             List<Computer> list = null;
             try {
                 //所有在服务器使用时间范围内的。即使没有连接成功。
-                list = new Gson().fromJson(RedisUtil.getR(redis_computer_list, null), new TypeToken<List<Computer>>() {
+                list = new Gson().fromJson(RedisUtilC.getR(SerUtilC.redis_computer_list, null), new TypeToken<List<Computer>>() {
                 }.getType());
             } catch (Exception e) {
             }
             if (list == null) {
-                list = SerUtil.SPRING.getBean(ComputerMapper.class)
+                list = SerUtilC.SPRING.getBean(ComputerMapper.class)
                         .selectByExample(new ComputerExample());// 查询所有，因为 serverStr 存储的所有computer
 
                 for (int x = list.size() - 1; x >= 0; x--) {// 缓存数据处理。（去除自己和cat）
                     Computer c33 = list.get(x);
-                    if (SerUtil.curCid.equals(c33.getCid())) {
+                    if (SerUtilC.curCid.equals(c33.getCid())) {
                         list.remove(x); // 去除自己
                     } else {
-                        SerUtil.servers.add(c33.getCid());
-                        SerUtil.servers.add(c33.getPri());
+                        SerUtilN.servers.add(c33.getCid());
+                        SerUtilN.servers.add(c33.getPri());
 
                         if (isGoodComputer(c33, sys_time)) {
                         } else {
@@ -194,20 +119,21 @@ public class SerUtil {
                         }
                     }
                 }
-                RedisUtil.setR(redis_computer_list, new Gson().toJson(list), RedisUtil.tim_r_30d);
+                RedisUtilC.setR(SerUtilC.redis_computer_list, new Gson().toJson(list), RedisUtilC.tim_r_30d);
             }
             moreToOne(list,jo,level,url);
         } else {
             moreToOne(cs,jo,level,url);
         }
     }
+
     //群发变单发，jo存储自己的业务内容和时间。
     private static void moreToOne(List<Computer> list,JsonObject jo,Integer level,int url){
         //群发处理。  待优化：关于不同业务处理，如群聊不能因为单个发送失败就返回给用户错误。如同步用户信息，某个服务器失败应该怎么处理。
         for (int y = list.size() - 1; y >= 0; y--) {
             boolean num = sendOne(list.get(y), jo, level, url);
             if (!num) {
-                RedisUtil.delR(redis_computer_list);
+                RedisUtilC.delR(SerUtilC.redis_computer_list);
             }
         }
         //      群发，需要处理：当对方服务器停用时，作何操作。
@@ -233,20 +159,20 @@ public class SerUtil {
 
         // 接受到信息后如何回执成功状态？ 主键UUID，和，url_ser_succ。待完善。
 
-        if (SerUtil.curCid.equals(computer.getCid())) {
+        if (SerUtilC.curCid.equals(computer.getCid())) {
             return false;//跳过自己，对应返回结果，只要是1才是正确，0也是错误。
         } else {
 
-            long sys_time =  WxUtil.getTim();  // 不变更业务的时间，服务器间传递时间单独存储在para_storage_tim中。
+            long sys_time =  TimUtilC.getTimReal();  // 不变更业务的时间，服务器间传递时间单独存储在para_storage_tim中。
             if (isGoodComputer(computer, sys_time)) {
                 String uuid = null; // 随机标识。FailsTask主键。
                 if (level != null && level_0 == level) {
-                    uuid = WxUtil.getU32();
+                    uuid = SerUtilC.getU32();
                     jo.addProperty(para_storage_need_return_id, uuid);
                 }
                 jo.addProperty(para_storage_tim, sys_time);
-                jo.addProperty(WxUtil.para_url, url);
-                ChannelHandlerContext cf = SerUtil.ctxCli.get(computer.getCid());
+                jo.addProperty(MineUtilA.para_url, url);
+                ChannelHandlerContext cf = SerUtilN.ctxCli.get(computer.getCid());
                 if (cf != null && cf.channel().isActive()) {
                     if (uuid != null) {
                         insertFails(uuid, computer.getCid(), url, sys_time, jo);
@@ -284,7 +210,7 @@ public class SerUtil {
         fails.setTim(tim);
         fails.setJo(jo.toString());
 
-        SerUtil.SPRING.getBean(StorageTaskMapper.class).insert(fails);
+        SerUtilC.SPRING.getBean(StorageTaskMapper.class).insert(fails);
 
     }
 
@@ -305,32 +231,32 @@ public class SerUtil {
      */
     public final static boolean connectServer(@NotNull Computer computer, Long tim) {
 
-        if (SerUtil.curCid.equals(computer.getCid())) {
+        if (SerUtilC.curCid.equals(computer.getCid())) {
 //            System.out.println("---跳过自己---服务器-" + new Gson().toJson(computer));
             return false;
         } else {
             String cid = computer.getCid();
-            if (SerUtil.ctxCli.containsKey(cid)) {
+            if (SerUtilN.ctxCli.containsKey(cid)) {
                 return true;
             } else {
 
                 if (tim == null) {
-                    tim = TimUtil.getTimReal();
+                    tim = TimUtilC.getTimReal();
                 }
 
                 if (isGoodComputer(computer, tim) && !conning.contains(cid)) {
                     conning.add(cid);
 
                     try {
-                        System.out.println("---申请连接----服务器--" + computer.getCid() + ":" + computer.getPor() + "  ......tim:  " + TimUtil.formatTimeToStr(WxUtil.getTim()) + "---------");
+                        System.out.println("---申请连接----服务器--" + computer.getCid() + ":" + computer.getPor() + "  ......tim:  " + TimUtilA.formatTimeToStr(TimUtilC.getTimReal()) + "---------");
 
                         JsonObject jtest = new JsonObject();
-                        jtest.addProperty(WxUtil.para_cid, SerUtil.curCid);
+                        jtest.addProperty(SerUtilC.para_cid, SerUtilC.curCid);
 
                         //  /?ws_suffix={"":""}
-                        URI uri = new URI("ws", null, computer.getPri(), computer.getPor(), "/", SerUtil.ws_suffix + "=" + jtest.toString(), null);
+                        URI uri = new URI("ws", null, computer.getPri(), computer.getPor(), "/", SerUtilN.ws_suffix + "=" + jtest.toString(), null);
                         Bootstrap bootstrap = new Bootstrap();
-                        bootstrap.group(SerUtil.eventLoopGroup)
+                        bootstrap.group(SerUtilN.eventLoopGroup)
                                 .channel(NioSocketChannel.class)
                                 .option(ChannelOption.TCP_NODELAY, true)
                                 .handler(new ChannelInitializer<SocketChannel>() {
@@ -350,8 +276,8 @@ public class SerUtil {
                             public void operationComplete(ChannelFuture channelFuture) throws Exception {
                                 conning.remove(cid);
                                 if (channelFuture.isSuccess()) {
-                                    ComputerMapper computerMapper = SerUtil.SPRING.getBean(ComputerMapper.class);
-                                    computer.setStop(RetNumUtil.n_0);//是否可用，每个服务器自己标记。也可批量管理员更新
+                                    ComputerMapper computerMapper = SerUtilC.SPRING.getBean(ComputerMapper.class);
+                                    computer.setStop(RetNumUtilA.n_0);//是否可用，每个服务器自己标记。也可批量管理员更新
                                     computerMapper.updateByPrimaryKeySelective(computer);
                                 }
                             }
@@ -359,12 +285,12 @@ public class SerUtil {
 
                         return false; // 当前没有连接时返回false（偏向与及时通知用户。那么群发怎么办？待完善）
                     } catch (Exception e) {
-                        System.out.println("严重报错---连接服务器--" + computer.getCid() + ":" + computer.getPor() + "  ......tim:  " + TimUtil.formatTimeToStr(WxUtil.getTim()));
+                        System.out.println("严重报错---连接服务器--" + computer.getCid() + ":" + computer.getPor() + "  ......tim:  " + TimUtilA.formatTimeToStr(TimUtilC.getTimReal()));
                         System.out.println(e.toString());
                         return false;
                     }
                 } else {
-                    System.out.println("-----不在服务时间----" + new Gson().toJson(computer) + TimUtil.formatTimeToStr(WxUtil.getTim()) + "---------");
+                    System.out.println("-----不在服务时间----" + new Gson().toJson(computer) + TimUtilA.formatTimeToStr(TimUtilC.getTimReal()) + "---------");
                     return false;
                 }
             }
@@ -383,11 +309,11 @@ public class SerUtil {
      * @return 可以使用true，不可以使用false
      */
     private static boolean isGoodComputer(Computer computer, Long tim) {
-        if (curCid.equals(computer.getCid())) {
+        if (SerUtilC.curCid.equals(computer.getCid())) {
             return false;
         } else {
             if (tim == null) {
-                tim = TimUtil.getTimReal();
+                tim = TimUtilC.getTimReal();
             }
             if (26 < computer.getStop() || tim < computer.getStim() || tim > computer.getEtim()) {
                 return false;
@@ -396,4 +322,70 @@ public class SerUtil {
             }
         }
     }
+
+
+
+    /*------- -----     返回信息开始。    start    如果不存在？根据json中的类型做不同处理。----
+        ---------- 给APP的皆为回复，给服务器的都是client方式发送 -------        -------------------------------*/
+
+    /**
+     * 返回http（仅仅返回给app，服务器间不存在。）
+     */
+    public final static void retHttp(HttpVersion version, ChannelHandlerContext ctx, JsonObject jout) {
+
+        // http不需要para_r
+        if (jout == null) {
+            ctx.close();
+        } else {
+            FullHttpResponse response = null;
+            try {
+                response = new DefaultFullHttpResponse(version,
+                        HttpResponseStatus.OK,
+                        Unpooled.wrappedBuffer(jout.toString().getBytes("UTF-8")));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            if (response == null) {
+                ctx.close();
+            } else {
+                ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
+            }
+        }
+    }
+
+    /**
+     * 发送长连接的text
+     * <p>
+     * 需要判断，url是否存在，否则会变成服务间的无限循环。。。。。。。。危险。。。。。
+     * <p>
+     * 服务器间通讯时：和SerUtil.ctxCli.get(再发送有什么区别？？？：：：ctxCli是以客户端身份发出信息，记载是否失败等。而此方法中的ChannelHandlerContext是回复给ctxCli的，不记载是否失败从发等信息
+     *
+     * @param inner 是否内部连接。 true服务器间，false用户连接。
+     * @param ctx
+     * @param jout  一、如果为null，关闭连接。。。二、如果para_r为null，关闭连接
+     */
+    public static void retWs(boolean inner, ChannelHandlerContext ctx, JsonObject jout) {
+        if (ctx == null) {
+        } else {
+            if (jout == null || jout.get(MineUtilA.para_r) == null) {
+                if (inner) {
+                    // 不返回(返回啦也不知道怎么接受)，不关闭
+                } else {
+                    //app，请求必须返回数据。
+                    if (jout == null) {  //如果为null，关闭。。。如果没有para_r不返回即可，不需要关闭。
+                        ctx.close();
+                    }
+                }
+            } else {
+                ctx.writeAndFlush(new TextWebSocketFrame(jout.toString()));
+            }
+        }
+    }
+
+    public static void retWsByuid(boolean inner, String uuid, JsonObject jout) {
+        retWs(inner, SerUtilN.ctxSer.get(uuid), jout);
+    }
+
+    /*----------------- -----------    返回信息开始    end  ----------------- ---------------------------*/
+
 }

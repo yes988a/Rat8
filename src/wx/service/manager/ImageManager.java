@@ -24,7 +24,7 @@ public class ImageManager {
                         + ""
                         + instance.get(Calendar.DAY_OF_YEAR);
                 String path = File.separator
-                        + FilesUtilA.file_tempimg + res
+                        + FilesUtilC.file_tempimg + res
                         + File.separator + yearday
                         + File.separator + txt;
                 File file = new File(path);

@@ -1,12 +1,13 @@
-package wx.common.utils_server;
+package wx.common.utils_ser_comm;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
+
 /**
  * 缓存，公用方法的封装。不涉及到业务逻辑。
  */
-public class RedisUtil {
+public class RedisUtilC {
 
     //前缀：redis 中取出来的userId。避免app自己传id(安全校验使用。)
     public final static String para_login_uid = "ueMs";
@@ -81,7 +82,7 @@ public class RedisUtil {
      */
     public final static Boolean setR(String key, String value, Integer seconds) {
 
-        Jedis je = SerUtil.SPRING.getBean("redis", JedisPool.class).getResource();
+        Jedis je = SerUtilC.SPRING.getBean("redis", JedisPool.class).getResource();
         boolean bb = false;
         try {
             je.set(key, value);
@@ -103,7 +104,7 @@ public class RedisUtil {
      * @return
      */
     public final static String getR(String key, Integer seconds) {
-        Jedis je = SerUtil.SPRING.getBean("redis", JedisPool.class).getResource();
+        Jedis je = SerUtilC.SPRING.getBean("redis", JedisPool.class).getResource();
 
         String get = val_error;
         try {
@@ -121,7 +122,7 @@ public class RedisUtil {
      * @return true存在，false不存在，null是redis错误
      */
     public final static Boolean existR(String key) {
-        Jedis je = SerUtil.SPRING.getBean("redis", JedisPool.class).getResource();
+        Jedis je = SerUtilC.SPRING.getBean("redis", JedisPool.class).getResource();
 
         Boolean b = null;
         try {
@@ -135,7 +136,7 @@ public class RedisUtil {
      * 删除 key jedis
      */
     public final static void delR(String key) {
-        JedisPool redisTemplate = SerUtil.SPRING.getBean("redis", JedisPool.class);
+        JedisPool redisTemplate = SerUtilC.SPRING.getBean("redis", JedisPool.class);
         Jedis je = redisTemplate.getResource();
         try {
             je.del(key);

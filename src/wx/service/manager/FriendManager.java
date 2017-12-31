@@ -6,13 +6,12 @@ import wx.common.generator.active.Chat;
 import wx.common.generator.active.ChatExample;
 import wx.common.generator.active.ChatMapper;
 import wx.common.generator.base.*;
-import wx.common.utils_app.ChatUtilA;
-import wx.common.utils_app.FriendUtilA;
-import wx.common.utils_app.MineUtilA;
-import wx.common.utils_app.RetNumUtil;
+import wx.common.utils_app.*;
 import wx.common.utils_ser_comm.FriendUtilC;
-import wx.common.utils_server.SerUtil;
-import wx.common.utils_server.WxUtil;
+import wx.common.utils_ser_comm.SerUtilC;
+import wx.common.utils_ser_comm.TimUtilC;
+import wx.common.utils_ser_netty.SerUtilN;
+
 import wx.common.entity.UserrelationSimple;
 import wx.common.entity.UsimpleTostrange;
 import wx.service.dao.ExtUrelationMapper;
@@ -50,7 +49,7 @@ public class FriendManager {
     //查询单个好友设置
     public JsonObject app_findUserrelation_http(JsonObject into) {
         JsonObject jout = new JsonObject();
-        jout.addProperty(WxUtil.para_r, RetNumUtil.n_b1);
+        jout.addProperty(MineUtilA.para_r, RetNumUtilA.n_b1);
 
         if (into.get(FriendUtilA.para_resid) == null || into.get(FriendUtilA.para_resid).getAsString().length() != 32
                 || into.get(MineUtilA.para_uid) == null || into.get(MineUtilA.para_uid).getAsString().length() != 32) {
@@ -65,7 +64,7 @@ public class FriendManager {
                 return jout;
             } else {
                 jout.addProperty(FriendUtilA.para_user_simple_json, new Gson().toJson(simple));
-                jout.addProperty(WxUtil.para_r, RetNumUtil.n_0);
+                jout.addProperty(MineUtilA.para_r, RetNumUtilA.n_0);
                 return jout;
             }
         }
@@ -75,7 +74,7 @@ public class FriendManager {
     //修改friend设置--remark
     public JsonObject app_updateRemark_http(JsonObject into) {
         JsonObject jout = new JsonObject();
-        jout.addProperty(WxUtil.para_r, RetNumUtil.n_b1);
+        jout.addProperty(MineUtilA.para_r, RetNumUtilA.n_b1);
 
         if (into.get(FriendUtilA.para_resid) == null || into.get(FriendUtilA.para_resid).getAsString().length() != 32
                 || into.get(MineUtilA.para_uid) == null || into.get(MineUtilA.para_uid).getAsString().length() != 32) {
@@ -94,7 +93,7 @@ public class FriendManager {
                 //日志，好友不存在，，不应该出现，因为是app发起的删除，怎么可能不知道。
                 return jout;
             } else {
-                jout.addProperty(WxUtil.para_r, RetNumUtil.n_0);
+                jout.addProperty(MineUtilA.para_r, RetNumUtilA.n_0);
                 return jout;
             }
         }
@@ -104,7 +103,7 @@ public class FriendManager {
     //修改friend设置--shie
     public JsonObject app_updateShie_http(JsonObject into) {
         JsonObject jout = new JsonObject();
-        jout.addProperty(WxUtil.para_r, RetNumUtil.n_b1);
+        jout.addProperty(MineUtilA.para_r, RetNumUtilA.n_b1);
 
         if (into.get(FriendUtilA.para_resid) == null || into.get(FriendUtilA.para_resid).getAsString().length() != 32
                 || into.get(MineUtilA.para_uid) == null || into.get(MineUtilA.para_uid).getAsString().length() != 32) {
@@ -113,7 +112,7 @@ public class FriendManager {
         } else {
             String uid = into.get(MineUtilA.para_uid).getAsString();
             int shie = into.get(FriendUtilA.para_shie).getAsInt();
-            if (shie == WxUtil.val_nagative || shie == WxUtil.val_positive) {
+            if (shie == MineUtilA.val_nagative || shie == MineUtilA.val_positive) {
                 String fid = into.get(FriendUtilA.para_resid).getAsString();
                 Urelation rure = new Urelation();
                 rure.setUid(uid);
@@ -124,7 +123,7 @@ public class FriendManager {
                     //日志，好友不存在，，不应该出现，因为是app发起的删除，怎么可能不知道。
                     return jout;
                 } else {
-                    jout.addProperty(WxUtil.para_r, RetNumUtil.n_0);
+                    jout.addProperty(MineUtilA.para_r, RetNumUtilA.n_0);
                     return jout;
                 }
             } else {
@@ -153,7 +152,7 @@ public class FriendManager {
         //缺少长度和格式判断。
 
         JsonObject jout = new JsonObject();
-        jout.addProperty(WxUtil.para_r, RetNumUtil.n_b1);
+        jout.addProperty(MineUtilA.para_r, RetNumUtilA.n_b1);
 
         if (!into.has(FriendUtilA.para_met) || !into.has(FriendUtilA.para_reqdes)
                 || !into.has(FriendUtilA.para_reqid) || !into.has(FriendUtilA.para_resid)) {
@@ -163,22 +162,22 @@ public class FriendManager {
             String reqid = into.get(FriendUtilA.para_reqid).getAsString();
             String reqdes = into.get(FriendUtilA.para_reqdes).getAsString();
             String met = into.get(FriendUtilA.para_met).getAsString();
-            if ("".equals(resid) || "".equals(reqid) || (!WxUtil.para_yes.equals(met) && !WxUtil.para_no.equals(met))) {
+            if ("".equals(resid) || "".equals(reqid) || (!MineUtilA.para_yes.equals(met) && !MineUtilA.para_no.equals(met))) {
                 // 黑名单。
                 return jout;
             } else {
-                Long tim = WxUtil.getTim();
+                Long tim = TimUtilC.getTimReal();
                 UsimpleTostrange reqDes = extUserFullMapper.findSimpleByUid(reqid);//查询自己的详情。
                 UserUnique resDes = userUniqueMapper.selectByPrimaryKey(resid);//请求者的详情。
                 if (reqDes == null) {//严重问题，只是断开连接应该不行。
                     // 黑名单。
                     return jout;
                 } else if (reqid.equals(resid)) {
-                    jout.addProperty(WxUtil.para_r, RetNumUtil.n_9);
+                    jout.addProperty(MineUtilA.para_r, RetNumUtilA.n_9);
                     return jout;
                 } else if (resDes == null) {
                     //人员不存在。
-                    jout.addProperty(WxUtil.para_r, RetNumUtil.n_8);
+                    jout.addProperty(MineUtilA.para_r, RetNumUtilA.n_8);
                     return jout;
                 } else {
                     UrelationKey key = new UrelationKey();
@@ -204,19 +203,19 @@ public class FriendManager {
                         chat.setTim(tim);
                         chat.setUid(resid);
 
-                        if (SerUtil.curCid.equals(resDes.getCid())) {
+                        if (SerUtilC.curCid.equals(resDes.getCid())) {
                             inner_friendSucc(chat);
-                            jout.addProperty(WxUtil.para_r, RetNumUtil.n_0);
+                            jout.addProperty(MineUtilA.para_r, RetNumUtilA.n_0);
                             return jout;
                         } else {
                             jout.addProperty(FriendUtilA.para_fri_req_json, new Gson().toJson(chat));
-                            SerUtil.sendOne(SerUtil.getComputer(resDes.getCid()), jout, SerUtil.level_0, FriendUtilC.url_ser_ratToFriend);
+                            SerUtilN.sendOne(SerUtilC.getComputer(resDes.getCid()), jout, SerUtilN.level_0, FriendUtilC.url_ser_ratToFriend);
                             //不等待，不等待，不等待好友服务器返回信息。
-                            jout.addProperty(WxUtil.para_r, RetNumUtil.n_0);
+                            jout.addProperty(MineUtilA.para_r, RetNumUtilA.n_0);
                             return jout;
                         }
                     } else {
-                        jout.addProperty(WxUtil.para_r, RetNumUtil.n_9);
+                        jout.addProperty(MineUtilA.para_r, RetNumUtilA.n_9);
                         return jout;
                     }
                 }
@@ -234,7 +233,7 @@ public class FriendManager {
         }
 
         JsonObject jout = new JsonObject();
-        jout.addProperty(WxUtil.para_r, RetNumUtil.n_b1);
+        jout.addProperty(MineUtilA.para_r, RetNumUtilA.n_b1);
         if (chat == null) {
             //严重错误，记录日志
             System.out.println("sendRat1ToFriend验证错误:" + into.get(FriendUtilA.para_fri_req_json).getAsString());
@@ -261,31 +260,31 @@ public class FriendManager {
         List<Chat> list = chatMapper.selectByExample(chatExample);
 
         JsonObject to_res = new JsonObject();
-        to_res.addProperty(WxUtil.para_url, FriendUtilA.url_ret_knownFri);
-        to_res.addProperty(WxUtil.para_r, RetNumUtil.n_0);
+        to_res.addProperty(MineUtilA.para_url, FriendUtilA.url_ret_knownFri);
+        to_res.addProperty(MineUtilA.para_r, RetNumUtilA.n_0);
         to_res.addProperty(FriendUtilA.para_fri_respone_json, new Gson().toJson(chat));
 
         if (list.size() == 0) {
             //发送给好友。
             chatMapper.insert(chat);
-            WxUtil.retWsByuid(false, chat.getUid(), to_res);
+            SerUtilN.retWsByuid(false, chat.getUid(), to_res);
         } else {
             if (list.size() > 1) {
                 chatMapper.deleteByExample(chatExample);
                 chatMapper.insert(chat);
-                WxUtil.retWsByuid(false, chat.getUid(), to_res);
+                SerUtilN.retWsByuid(false, chat.getUid(), to_res);
             } else {//等于一，对比时间和状态即可。
                 /*
                 if (WxUtil.stat_ab == list.get(0).getStat()) {//等待发送。（也不能删除，留着判断安全性。）
                     //忽略掉新的，留着旧请求。
-                    WxUtil.retWsByuid(false, chat.getUid(), to_res);
+                    SerUtilN.retWsByuid(false, chat.getUid(), to_res);
                 } else if (WxUtil.stat_ab == list.get(0).getStat()) {//已经发送过啦。（不能删除，因为还留着判断安全性。）
                     //判断时间是否相同。
                     if (list.get(0).getTim() == chat.getTim()) {
                         // 忽略新，不做操作。
                     } else {
                         chatMapper.insert(chat); //两次不同的请求。
-                        WxUtil.retWsByuid(false, chat.getUid(), to_res);
+                        SerUtilN.retWsByuid(false, chat.getUid(), to_res);
                         //客户端，接受到相同的请求后，应该发送"忽略旧请求"，以新请求为准。
                     }
                 }
@@ -304,7 +303,7 @@ public class FriendManager {
     public JsonObject app_agreeFri_http(JsonObject into) {
 
         JsonObject jout = new JsonObject();
-        jout.addProperty(WxUtil.para_r, RetNumUtil.n_b1);
+        jout.addProperty(MineUtilA.para_r, RetNumUtilA.n_b1);
 
         if (into.get(FriendUtilA.para_tim_respone) == null || into.get(FriendUtilA.para_reqid) == null
                 || into.get(FriendUtilA.para_resid) == null || into.get(FriendUtilA.para_reqnickname) == null) {
@@ -325,14 +324,14 @@ public class FriendManager {
 
             long count = chatMapper.countByExample(ce);
             if (count == 1) {
-                long tim = WxUtil.getTim();
+                long tim = TimUtilC.getTimReal();
 
                 UserUnique reqUni = userUniqueMapper.selectByPrimaryKey(reqid);//请求者。
                 UserFull respFull = userFullMapper.selectByPrimaryKey(resid);//回复者。
 
                 if (reqUni == null || respFull == null) {
                     //过期啦
-                    jout.addProperty(WxUtil.para_r, RetNumUtil.n_10);
+                    jout.addProperty(MineUtilA.para_r, RetNumUtilA.n_10);
                     return jout;
                 } else {
 
@@ -340,12 +339,12 @@ public class FriendManager {
                     insertFriend(resid, reqid, reqUni.getCid(), reqUni.getAcc(), reqNick, tim);
 
                     //发送到请求者的服务器。
-                    if (reqUni.getCid().equals(SerUtil.curCid)) {
+                    if (reqUni.getCid().equals(SerUtilC.curCid)) {
                         // 是否好友，以自己服务器数据为准（任何人员自己服务器有好友信息即使好友。）。
-                        insertFriend(reqid, resid, SerUtil.curCid, respFull.getAcc(), respFull.getNickname(), tim);//请求者服务器插入数据。
+                        insertFriend(reqid, resid, SerUtilC.curCid, respFull.getAcc(), respFull.getNickname(), tim);//请求者服务器插入数据。
                         noticeReq(reqid, resid);
 
-                        jout.addProperty(WxUtil.para_r, RetNumUtil.n_0);
+                        jout.addProperty(MineUtilA.para_r, RetNumUtilA.n_0);
                         return jout;
                     } else {
                         // 通知，请求者服务器。
@@ -354,19 +353,19 @@ public class FriendManager {
                         jout.addProperty(FriendUtilA.para_tim_succ_add, tim);
                         jout.addProperty(FriendUtilA.para_resnickname, respFull.getNickname());
                         // 通知请求者服务器。
-                        SerUtil.sendOne(SerUtil.getComputer(reqUni.getCid()), jout, SerUtil.level_0, FriendUtilC.url_ser_resToreq);
+                        SerUtilN.sendOne(SerUtilC.getComputer(reqUni.getCid()), jout, SerUtilN.level_0, FriendUtilC.url_ser_resToreq);
 
-                        jout.addProperty(WxUtil.para_r, RetNumUtil.n_0);
+                        jout.addProperty(MineUtilA.para_r, RetNumUtilA.n_0);
                         return jout;
                     }
                 }
             } else if (count > 1) {
                 // 不应该。。。日志，手动检查.
-                jout.addProperty(WxUtil.para_r, RetNumUtil.n_b1);
+                jout.addProperty(MineUtilA.para_r, RetNumUtilA.n_b1);
                 return jout;
             } else {
                 //过期啦
-                jout.addProperty(WxUtil.para_r, RetNumUtil.n_10);
+                jout.addProperty(MineUtilA.para_r, RetNumUtilA.n_10);
                 return jout;
             }
         }
@@ -382,7 +381,7 @@ public class FriendManager {
         } else {
             String resid = into.get(FriendUtilA.para_resid).getAsString();
             UserUnique resUni = userUniqueMapper.selectByPrimaryKey(resid);//回复者。
-            if (resUni == null || !SerUtil.curCid.equals(resUni.getCid())) {
+            if (resUni == null || !SerUtilC.curCid.equals(resUni.getCid())) {
                 //纠错，回复者服务器已经插入啦，这个地方，有问题。
             } else {
                 String resnickname = into.get(FriendUtilA.para_resnickname).getAsString();
@@ -412,7 +411,7 @@ public class FriendManager {
         if (urelation == null) {
             ure.setAcc(f_acc);
             ure.setRemark(f_nickname);
-            ure.setShie(WxUtil.val_positive);
+            ure.setShie(MineUtilA.val_positive);
             urelationMapper.insert(ure);
         } else {
             urelationMapper.updateByPrimaryKeySelective(ure);
@@ -428,9 +427,9 @@ public class FriendManager {
 
         //告诉请求者，好友已经同意添加
         JsonObject chat = new JsonObject();
-        chat.addProperty(WxUtil.para_url, FriendUtilA.url_ret_knownFri);
+        chat.addProperty(MineUtilA.para_url, FriendUtilA.url_ret_knownFri);
         chat.addProperty(FriendUtilA.para_resid, resid);
-        WxUtil.retWsByuid(false, uid, jout);//提前判断，没有发送成功选择怎么的处理。使用不同的appSendMsg
+        SerUtilN.retWsByuid(false, uid, jout);//提前判断，没有发送成功选择怎么的处理。使用不同的appSendMsg
         //标记，新信息变化，暂放
     }
 
@@ -440,8 +439,8 @@ public class FriendManager {
     public JsonObject app_delFriFrom_http(JsonObject into) {
 
         JsonObject jout = new JsonObject();
-        jout.addProperty(WxUtil.para_r, RetNumUtil.n_b1);
-        jout.addProperty(WxUtil.para_url, FriendUtilA.url_app_delFriFrom);
+        jout.addProperty(MineUtilA.para_r, RetNumUtilA.n_b1);
+        jout.addProperty(MineUtilA.para_url, FriendUtilA.url_app_delFriFrom);
 
         String uid = null;
         if (into.get(FriendUtilA.para_tim_req_del) == null || into.get(FriendUtilA.para_resid) == null || uid == null) {
@@ -457,14 +456,14 @@ public class FriendManager {
             if (urelation == null) {
                 return jout;
             } else {
-                if (SerUtil.curCid.equals(urelation.getCid())) {
+                if (SerUtilC.curCid.equals(urelation.getCid())) {
                     //标记，被删除者关系
                     delResponse(resid, uid);
                     //删除请求者中的关系
                     urelationMapper.deleteByPrimaryKey(key);
                     //通知，发起者，删除成功。
                     jout.addProperty(FriendUtilA.para_resid, resid);
-                    jout.addProperty(WxUtil.para_r, RetNumUtil.n_0);
+                    jout.addProperty(MineUtilA.para_r, RetNumUtilA.n_0);
                     return jout;
                     //不需要通知被删除者。被删除者点击好友聊天时，检测好友信息。？？？？
 
@@ -472,7 +471,7 @@ public class FriendManager {
                     JsonObject toFri = new JsonObject();
                     toFri.addProperty(FriendUtilA.para_reqid, uid);
                     toFri.addProperty(FriendUtilA.para_resid, resid);
-                    SerUtil.sendOne(SerUtil.getComputer(urelation.getCid()), toFri, SerUtil.level_0, FriendUtilC.url_ser_delFriToRat2);
+                    SerUtilN.sendOne(SerUtilC.getComputer(urelation.getCid()), toFri, SerUtilN.level_0, FriendUtilC.url_ser_delFriToRat2);
                     return jout;
                 }
             }

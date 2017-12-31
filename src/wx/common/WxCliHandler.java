@@ -3,7 +3,8 @@ package wx.common;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
-import wx.common.utils_server.SerUtil;
+import wx.common.utils_ser_comm.SerUtilC;
+import wx.common.utils_ser_netty.SerUtilN;
 import wx.service.dao.ExtComputerMapper;
 
 /**
@@ -24,9 +25,9 @@ public class WxCliHandler extends SimpleChannelInboundHandler<TextWebSocketFrame
 //        textWebSocketFrame.release();   当做为客户端时，只有一个handler所以，作者，在接受read后，做release()，所以，如果这里写啦，就会报错。
         //作为服务端时，有多个handler，所以，netty作者不知道什么时候release()，没有做此操作，只要不用了，可以手动做release()操作。
         System.out.println("client>>>>>" + mm);
-        if (SerUtil.send_heart.equals(mm)) {
-            ctx.writeAndFlush(new TextWebSocketFrame(SerUtil.res_heart));
-        } else if (SerUtil.res_heart.equals(mm)) {
+        if (SerUtilN.send_heart.equals(mm)) {
+            ctx.writeAndFlush(new TextWebSocketFrame(SerUtilN.res_heart));
+        } else if (SerUtilN.res_heart.equals(mm)) {
             ctx.close();
         } else {
             //正常业务处理。
@@ -39,17 +40,17 @@ public class WxCliHandler extends SimpleChannelInboundHandler<TextWebSocketFrame
     @Override
     public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
         super.channelRegistered(ctx);
-        SerUtil.ctxCli.put(cid, ctx);
-        SerUtil.conning.remove(cid);
+        SerUtilN.ctxCli.put(cid, ctx);
+        SerUtilN.conning.remove(cid);
     }
 
     @Override
     public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
         super.channelUnregistered(ctx);
-        SerUtil.ctxCli.remove(cid);
-        SerUtil.conning.remove(cid);
+        SerUtilN.ctxCli.remove(cid);
+        SerUtilN.conning.remove(cid);
         //日志。并在当前服务器标识成不可用，
-        ExtComputerMapper extComputerMapper = SerUtil.SPRING.getBean(ExtComputerMapper.class);
+        ExtComputerMapper extComputerMapper = SerUtilC.SPRING.getBean(ExtComputerMapper.class);
         extComputerMapper.updateStop(cid);
         System.out.println("clien 断开：" + cid);
     }

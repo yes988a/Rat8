@@ -1,5 +1,9 @@
 package wx.common.utils_ser_comm;
 
+import com.google.gson.JsonObject;
+import wx.common.utils_app.MineUtilA;
+import wx.common.utils_app.RetNumUtilA;
+
 public class MineUtilC {
 
     //更新我的昵称。 （关于时间冲突问题：
@@ -11,5 +15,23 @@ public class MineUtilC {
     // 所以，不需要有url_ser_updateMyNickname这样的url，而是url_ser_update_mine）
     public final static int url_ser_update_mine = 7642;
 
+
+    /**
+     * 统一定义返回信息
+     * <p>
+     * 修改我的设置的时候。
+     *
+     * @param update
+     */
+    public final static JsonObject retMyset(int update) {
+        JsonObject jout = new JsonObject();
+        if (update == 1) {
+            jout.addProperty(MineUtilA.para_r, RetNumUtilA.n_0);
+            return jout;
+        } else {
+            jout.addProperty(MineUtilA.para_r, RetNumUtilA.n_b1);
+            return jout;
+        }
+    }
 
 }

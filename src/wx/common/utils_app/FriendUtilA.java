@@ -1,7 +1,5 @@
 package wx.common.utils_app;
 
-import wx.common.utils_server.SerUtil;
-import wx.service.dao.ExtUrelationMapper;
 
 //url中app请求，也作为回复app的标识。
 public class FriendUtilA {
@@ -93,16 +91,8 @@ public class FriendUtilA {
 
     //好友ID集合，json格式.
     public final static String para_fids = "f0Ds";
+
+    //好友id，单个的
     public final static String para_fid = ")3S";
 
-    //判断是否我的好友，并获取他的cid
-    public final static String getUsimpleCid(String uid, String fid) {
-        if(fid==null || "".equals(fid)){
-            return null;
-        }else {
-            ExtUrelationMapper extUrelationDao = SerUtil.SPRING.getBean(ExtUrelationMapper.class);
-            String cid = extUrelationDao.findUserCidByfid(uid, fid);
-            return cid;
-        }
-    }
 }
